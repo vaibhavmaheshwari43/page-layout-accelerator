@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SP_Secondary_Wholesaler__c</fullName>
+    <externalId>false</externalId>
+    <label>Secondary Wholesaler</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>ABC</fullName><default>false</default><label>ABC</label></value>
+            <value><fullName>ASD</fullName><default>false</default><label>ASD</label></value>
+            <value><fullName>Cardinal</fullName><default>false</default><label>Cardinal</label></value>
+            <value><fullName>McKesson</fullName><default>false</default><label>McKesson</label></value>
+            <value><fullName>McKesson Plasma/Specialty</fullName><default>false</default><label>McKesson Plasma/Specialty</label></value>
+            <value><fullName>Morris &amp; Dickson</fullName><default>false</default><label>Morris &amp; Dickson</label></value>
+            <value><fullName>Oncology Supply</fullName><default>false</default><label>Oncology Supply</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SP_Customer_Adoption_Curve__c</fullName>
+    <externalId>false</externalId>
+    <label>Customer Adoption Curve</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>No awareness</fullName><default>false</default><label>No awareness</label></value>
+            <value><fullName>Awareness</fullName><default>false</default><label>Awareness</label></value>
+            <value><fullName>Clinical buy-in</fullName><default>false</default><label>Clinical buy-in</label></value>
+            <value><fullName>Contract presented</fullName><default>false</default><label>Contract presented</label></value>
+            <value><fullName>Contract negotiation</fullName><default>false</default><label>Contract negotiation</label></value>
+            <value><fullName>Contract accepted</fullName><default>false</default><label>Contract accepted</label></value>
+            <value><fullName>Contract executed</fullName><default>false</default><label>Contract executed</label></value>
+            <value><fullName>Contract pull-through</fullName><default>false</default><label>Contract pull-through</label></value>
+            <value><fullName>9. Inactive</fullName><default>false</default><label>9. Inactive</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

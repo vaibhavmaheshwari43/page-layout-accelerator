@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SP_Payer_Mix__c</fullName>
+    <externalId>false</externalId>
+    <label>Commercial/Medicare Mix</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>25/75</fullName><default>false</default><label>25/75</label></value>
+            <value><fullName>50/50</fullName><default>false</default><label>50/50</label></value>
+            <value><fullName>75/25</fullName><default>false</default><label>75/25</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

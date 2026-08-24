@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Segmentation__c</fullName>
+    <externalId>false</externalId>
+    <label>Segmentation</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>GPO Pull Through</fullName><default>false</default><label>GPO Pull Through</label></value>
+            <value><fullName>Spectrum Heritage</fullName><default>false</default><label>Spectrum Heritage</label></value>
+            <value><fullName>Strategic Contractors</fullName><default>false</default><label>Strategic Contractors</label></value>
+            <value><fullName>Opportunistic</fullName><default>false</default><label>Opportunistic</label></value>
+            <value><fullName>Redeemables</fullName><default>false</default><label>Redeemables</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

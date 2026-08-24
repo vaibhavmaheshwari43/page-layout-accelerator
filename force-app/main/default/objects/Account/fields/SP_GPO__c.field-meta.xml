@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SP_GPO__c</fullName>
+    <externalId>false</externalId>
+    <label>GPO</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>ION</fullName><default>false</default><label>ION</label></value>
+            <value><fullName>VitalSource</fullName><default>false</default><label>VitalSource</label></value>
+            <value><fullName>Onmark</fullName><default>false</default><label>Onmark</label></value>
+            <value><fullName>Unity</fullName><default>false</default><label>Unity</label></value>
+            <value><fullName>Premier</fullName><default>false</default><label>Premier</label></value>
+            <value><fullName>Vizient</fullName><default>false</default><label>Vizient</label></value>
+            <value><fullName>HPG</fullName><default>false</default><label>HPG</label></value>
+            <value><fullName>SAN</fullName><default>false</default><label>SAN</label></value>
+            <value><fullName>Other</fullName><default>false</default><label>Other</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

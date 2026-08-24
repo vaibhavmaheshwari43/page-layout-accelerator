@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SP_Account_Type__c</fullName>
+    <externalId>false</externalId>
+    <label>Account Type</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>340-B Clinic</fullName><default>false</default><label>340-B Clinic</label></value>
+            <value><fullName>340-B Hospital</fullName><default>false</default><label>340-B Hospital</label></value>
+            <value><fullName>340-B Other</fullName><default>false</default><label>340-B Other</label></value>
+            <value><fullName>Clinic</fullName><default>false</default><label>Clinic</label></value>
+            <value><fullName>Federal</fullName><default>false</default><label>Federal</label></value>
+            <value><fullName>Hospital</fullName><default>false</default><label>Hospital</label></value>
+            <value><fullName>Kaiser</fullName><default>false</default><label>Kaiser</label></value>
+            <value><fullName>Other</fullName><default>false</default><label>Other</label></value>
+            <value><fullName>340-B IDN</fullName><default>false</default><label>340-B IDN</label></value>
+            <value><fullName>IDN</fullName><default>false</default><label>IDN</label></value>
+            <value><fullName>Child MCO</fullName><default>false</default><label>Child MCO</label></value>
+            <value><fullName>Parent MCO</fullName><default>false</default><label>Parent MCO</label></value>
+            <value><fullName>PBM</fullName><default>false</default><label>PBM</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

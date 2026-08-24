@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <!-- PLACEHOLDER: this field was NOT found in Veeva's own Account describe.
+         Type is an unverified guess (Text 255). Confirm with whoever owns the
+         original HCO build before treating this as correct. -->
+    <fullName>SP_What_is_the_anticipated_timeline__c</fullName>
+    <externalId>false</externalId>
+    <label>SP What is the anticipated timeline</label>
+    <length>255</length>
+    <required>false</required>
+    <type>Text</type>
+</CustomField>
