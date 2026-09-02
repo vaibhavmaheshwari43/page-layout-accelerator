@@ -620,46 +620,39 @@ if st.session_state.classified:
                        "flag_retire", "flag_decision_needed", "flag_no_registry_entry",
                        "informational_only"]
 
-    # Commented out (kept, not deleted, for potential future re-enable) --
-    # "Bulk actions" feature, per request that it wasn't adding much value.
-    # Using real '#' comments, not a triple-quoted """...""" string -- that
-    # approach is fragile and previously caused a real "unexpected indent"
-    # error; a '#' comment is always safe regardless of surrounding
-    # indentation, since the parser skips it entirely.
-    #
-    # st.markdown("**Bulk actions** \u2014 useful when reviewing many rows at once (e.g. a new layout like HCP):")
-    # bulk_col1, bulk_col2, bulk_col3 = st.columns([2, 2, 1])
-    # with bulk_col1:
-    #     bulk_confidence = st.selectbox("Approve all rows with confidence \u2265",
-    #                                     ["High only", "High + Medium", "All (not recommended)"])
-    # with bulk_col2:
-    #     st.caption("Only affects rows currently proposed 'auto_generate' or 'Direct/Map' \u2014 "
-    #                "never bulk-approves anything already flagged Rebuild/Retire/Decision Needed.")
-    # with bulk_col3:
-    #     bulk_apply = st.button("Apply bulk approval")
-    #
-    # if bulk_apply:
-    #     threshold = {"High only": {"High"}, "High + Medium": {"High", "Medium"},
-    #                  "All (not recommended)": {"High", "Medium", "Low", "N/A"}}[bulk_confidence]
-    #     applied_count = 0
-    #     for i, e in enumerate(classified):
-    #         conf = e.get("target", {}).get("confidence", "N/A")
-    #         # Only promotes rows sitting at flag_manual_review (a registry match
-    #         # that already HAS a proposed target, just needed confirmation because
-    #         # of its confidence level) — never touches flag_no_registry_entry
-    #         # (no target exists at all), flag_rebuild/retire/decision_needed
-    #         # (genuine judgment calls), or rows already auto_generate.
-    #         if e.get("action") == "flag_manual_review" and conf in threshold:
-    #             df.loc[df["idx"] == i, "Status (system)"] = "auto_generate"
-    #             applied_count += 1
-    #     if applied_count:
-    #         st.success(f"Bulk-confirmed {applied_count} row(s) at '{bulk_confidence}' confidence "
-    #                    f"from 'needs review' to 'auto_generate'. Rebuild/Retire/Decision-Needed rows "
-    #                    f"and anything with no registry target were left untouched \u2014 those still "
-    #                    f"need individual review below.")
-    #     else:
-    #         st.info("No rows matched \u2014 either nothing is at 'flag_manual_review', or none meet "
-    #                "the selected confidence threshold.")
+    st.markdown("**Bulk actions** \u2014 useful when reviewing many rows at once (e.g. a new layout like HCP):")
+    bulk_col1, bulk_col2, bulk_col3 = st.columns([2, 2, 1])
+    with bulk_col1:
+        bulk_confidence = st.selectbox("Approve all rows with confidence \u2265",
+                                        ["High only", "High + Medium", "All (not recommended)"])
+    with bulk_col2:
+        st.caption("Only affects rows currently proposed 'auto_generate' or 'Direct/Map' \u2014 "
+                   "never bulk-approves anything already flagged Rebuild/Retire/Decision Needed.")
+    with bulk_col3:
+        bulk_apply = st.button("Apply bulk approval")
+
+    if bulk_apply:
+        threshold = {"High only": {"High"}, "High + Medium": {"High", "Medium"},
+                     "All (not recommended)": {"High", "Medium", "Low", "N/A"}}[bulk_confidence]
+        applied_count = 0
+        for i, e in enumerate(classified):
+            conf = e.get("target", {}).get("confidence", "N/A")
+            # Only promotes rows sitting at flag_manual_review (a registry match
+            # that already HAS a proposed target, just needed confirmation because
+            # of its confidence level) — never touches flag_no_registry_entry
+            # (no target exists at all), flag_rebuild/retire/decision_needed
+            # (genuine judgment calls), or rows already auto_generate.
+            if e.get("action") == "flag_manual_review" and conf in threshold:
+                df.loc[df["idx"] == i, "Status (system)"] = "auto_generate"
+                applied_count += 1
+        if applied_count:
+            st.success(f"Bulk-confirmed {applied_count} row(s) at '{bulk_confidence}' confidence "
+                       f"from 'needs review' to 'auto_generate'. Rebuild/Retire/Decision-Needed rows "
+                       f"and anything with no registry target were left untouched \u2014 those still "
+                       f"need individual review below.")
+        else:
+            st.info("No rows matched \u2014 either nothing is at 'flag_manual_review', or none meet "
+                   "the selected confidence threshold.")
 
     edited_df = st.data_editor(
         df,
@@ -813,8 +806,8 @@ if st.session_state.generated:
     # -----------------------------------------------------------------
     st.header("4. Validate")
     with st.expander("Run validation checks", expanded=True):
-        st.caption("Checks the generated output for internal consistency \u2014 makes sure nothing "
-                   "flagged for your review accidentally leaked into the final Salesforce files.")
+        st.caption("Self-consistency check always runs. Reference comparison is optional "
+                   "(only if you have a known-correct hand-built file to check against, e.g. HCO).")
 
         gen_layout_path = gen_flexipage_path = report_json_path = None
         try:
@@ -844,37 +837,29 @@ if st.session_state.generated:
             st.exception(e)
 
         st.subheader("Optional: compare against a known-correct reference")
-        # Commented out (kept, not deleted, for potential future
-        # re-enable) -- this specific feature needs a manually-migrated
-        # reference layout to compare against, which was only ever useful
-        # for OUR internal proving process (e.g. HCO's 41/41 match), not
-        # something a real client would have available in normal use.
-        # Using real '#' comments -- always safe regardless of surrounding
-        # indentation, unlike a triple-quoted string.
-        #
-        # ref_layout_file = st.file_uploader("Reference Page Layout XML (optional)", type=["xml"], key="ref_layout")
-        # ref_flexipage_file = st.file_uploader("Reference Flexipage XML (optional)", type=["xml"], key="ref_flexipage")
-        #
-        # if (ref_layout_file or ref_flexipage_file) and st.button("Run reference comparison"):
-        #     try:
-        #         if ref_layout_file and gen_layout_path:
-        #             with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
-        #                 f.write(ref_layout_file.getvalue())
-        #                 ref_layout_path = f.name
-        #             result = compare_layouts(ref_layout_path, gen_layout_path)
-        #             st.write("**Page Layout comparison:**", result["status"])
-        #             st.json(result)
-        #
-        #         if ref_flexipage_file and gen_flexipage_path:
-        #             with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
-        #                 f.write(ref_flexipage_file.getvalue())
-        #                 ref_flexipage_path = f.name
-        #             result = compare_flexipages(ref_flexipage_path, gen_flexipage_path)
-        #             st.write("**Flexipage comparison:**", result["status"])
-        #             st.json(result)
-        #     except Exception as e:
-        #         st.error("Reference comparison hit an error. Full details below:")
-        #         st.exception(e)
+        ref_layout_file = st.file_uploader("Reference Page Layout XML (optional)", type=["xml"], key="ref_layout")
+        ref_flexipage_file = st.file_uploader("Reference Flexipage XML (optional)", type=["xml"], key="ref_flexipage")
+
+        if (ref_layout_file or ref_flexipage_file) and st.button("Run reference comparison"):
+            try:
+                if ref_layout_file and gen_layout_path:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
+                        f.write(ref_layout_file.getvalue())
+                        ref_layout_path = f.name
+                    result = compare_layouts(ref_layout_path, gen_layout_path)
+                    st.write("**Page Layout comparison:**", result["status"])
+                    st.json(result)
+
+                if ref_flexipage_file and gen_flexipage_path:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
+                        f.write(ref_flexipage_file.getvalue())
+                        ref_flexipage_path = f.name
+                    result = compare_flexipages(ref_flexipage_path, gen_flexipage_path)
+                    st.write("**Flexipage comparison:**", result["status"])
+                    st.json(result)
+            except Exception as e:
+                st.error("Reference comparison hit an error. Full details below:")
+                st.exception(e)
 
         for p in (gen_layout_path, gen_flexipage_path, report_json_path):
             if p and os.path.exists(p):

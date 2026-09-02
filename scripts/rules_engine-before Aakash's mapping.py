@@ -115,203 +115,53 @@ def registry_key(element_type, api_name, layout_section):
 
 
 def load_registry(path):
-    """Builds TWO indices, not one:
-    - A GENERIC index: (element_type, api_name) -> entry, same as before.
-      Correct fallback for genuinely universal fields (CreatedById,
-      LastModifiedById -- same meaning on every object).
-    - A SPECIFIC index: (element_type, api_name, veeva_object) -> entry.
-      Needed because some fields are legitimately repurposed with a
-      DIFFERENT meaning per object -- confirmed real example: 'Name' means
-      'Account Name' on Account, but 'Address line 1' on Address_vod__c.
-      Grouping these together (the old behavior) silently lost the
-      object-specific entry during registry merges.
+    """Builds the registry index. For most element types, the key is
+    (element_type, api_name) — NOT layout_section — because a field/button/
+    related-list's correct target is a property of the element itself, not
+    of which section it happens to sit in on one particular layout
+    (confirmed by testing against HCP: standard fields like Name,
+    RecordTypeId, Phone, CreatedById already had confirmed HCO targets, but
+    sat under different section labels on HCP's layout and incorrectly
+    missed the registry under the old section-inclusive key).
 
-    classify_elements tries the specific index first (when the current
-    layout's source object is known and the entry has that data), and
-    only falls back to the generic index otherwise -- so fields without
-    tracked object data (like the original hand-built HCO entries) keep
-    working exactly as before.
+    Empty placeholder sections are the deliberate exception (see
+    SECTION_SCOPED_TYPES) — their layout_section IS their identity, so it
+    stays part of the key.
 
-    If multiple rows share the GENERIC key but disagree on
-    classification/target, that's flagged via registry_conflicts. Rows
-    that differ only because they're genuinely different per-object
-    entries (now living in the specific index) are correctly NOT treated
-    as conflicts.
-    """
+    If multiple rows share a key (e.g. the same button appearing in two
+    layout locations) but DISAGREE on classification/target, that's a real
+    registry data problem — flagged via registry_conflicts rather than
+    silently picking one."""
     if not path:
-        return {}, [], {}
+        return {}, []
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
 
     grouped = defaultdict(list)
-    specific_index = {}
     for e in data.get("entries", []):
         key = registry_key(e["element_type"], e["api_name"], e["layout_section"])
         grouped[key].append(e)
 
-        veeva_object = e.get("veeva_object")
-        if veeva_object and e["element_type"] not in SECTION_SCOPED_TYPES:
-            specific_key = (e["element_type"], e["api_name"], veeva_object)
-            # If the same (field, object) appears more than once (e.g. same
-            # field on multiple layouts under the same object), first one
-            # wins -- consistent with the generic index's existing behavior.
-            if specific_key not in specific_index:
-                specific_index[specific_key] = e
-
     index = {}
     conflicts = []
     for key, group in grouped.items():
-        # A disagreement is only a REAL conflict if it involves two entries
-        # that could actually compete for the same lookup at runtime:
-        #   - two entries that BOTH lack a veeva_object (both would only
-        #     ever serve as the generic fallback -- if they disagree, we
-        #     genuinely can't tell which one wins), or
-        #   - two entries that share the SAME veeva_object (a genuine
-        #     specific-index collision).
-        # A generic entry (no object) vs. any object-specific entry is
-        # NEVER a real conflict -- classify_elements always tries the
-        # specific index first when the object is known, so the generic
-        # entry only kicks in as a fallback for objects with no specific
-        # entry at all. They don't compete in practice.
-        generic_entries = [g for g in group if not g.get("veeva_object")]
-        by_object = defaultdict(list)
-        for g in group:
-            if g.get("veeva_object"):
-                by_object[g["veeva_object"]].append(g)
-
-        real_conflict = False
-        for entries in [generic_entries] + list(by_object.values()):
-            if len(entries) < 2:
-                continue
-            base = entries[0]
-            for other in entries[1:]:
-                if (other["classification"]["canonical"] != base["classification"]["canonical"]
-                        or other["action"] != base["action"]):
-                    real_conflict = True
-                    break
-            if real_conflict:
+        first = group[0]
+        for other in group[1:]:
+            if (other["classification"]["canonical"] != first["classification"]["canonical"]
+                    or other["action"] != first["action"]):
+                conflicts.append({
+                    "key": key,
+                    "sections_involved": [g["layout_section"] for g in group],
+                    "conflicting_classifications": [g["classification"]["canonical"] for g in group],
+                    "conflicting_actions": [g["action"] for g in group],
+                })
                 break
+        index[key] = first
 
-        if real_conflict:
-            conflicts.append({
-                "key": key,
-                "sections_involved": [g["layout_section"] for g in group],
-                "conflicting_classifications": [g["classification"]["canonical"] for g in group],
-                "conflicting_actions": [g["action"] for g in group],
-            })
-        index[key] = group[0]
-
-    return index, conflicts, specific_index
+    return index, conflicts
 
 
-def determine_plausible_target_objects(raw_elements, registry_index, specific_index, source_object, fallback_object):
-    """Figures out which LSC object(s) this layout's fields legitimately
-    belong to -- can be MORE THAN ONE, not just a single 'winner'.
-
-    Real, confirmed problem with the single-majority version below: an
-    Address_vod__c layout's fields split genuinely and evenly across
-    Address (4 fields) and ContactPointPhone (4 fields) -- neither reaches
-    a >50% majority, so that logic falls back to comparing against the
-    literal Veeva object name 'Address_vod__c', which no real field will
-    ever match (that object doesn't exist in LSC at all) -- blocking
-    EVERY field on the layout, including ones that were confidently,
-    correctly mapped (e.g. City -> Address.City, High confidence).
-
-    Better model: any object that a MEANINGFUL cluster of fields agree on
-    (not just a singleton) is treated as legitimate for this layout. Only
-    a genuine rare outlier -- a target object basically no other field
-    agrees with -- gets flagged.
-
-    Returns a set of object names considered legitimate for this layout.
-    """
-    from collections import Counter
-    target_counts = Counter()
-    for el in raw_elements:
-        if el["element_type"] != "Field":
-            continue
-        reg_entry = None
-        if source_object and specific_index:
-            reg_entry = specific_index.get((el["element_type"], el["api_name"], source_object))
-        if reg_entry is None:
-            key = registry_key(el["element_type"], el["api_name"], el["layout_section"])
-            reg_entry = registry_index.get(key)
-        if reg_entry:
-            obj = reg_entry["target"].get("object")
-            if obj:
-                target_counts[obj] += 1
-
-    if not target_counts:
-        return {fallback_object} if fallback_object else set()
-
-    total = sum(target_counts.values())
-    legitimate = set()
-    top_count = target_counts.most_common(1)[0][1]
-    for obj, count in target_counts.items():
-        if count == top_count or (count >= 2 and count / total >= 0.15):
-            legitimate.add(obj)
-
-    return legitimate
-
-
-def determine_effective_target_object(raw_elements, registry_index, fallback_object):
-    """Figures out what most Fields on this layout actually agree the real
-    LSC object is -- NOT the raw Veeva object name (which often doesn't
-    exist in LSC at all, e.g. 'Call2_vod__c'). Confirmed against real data:
-    a Call2_vod__c layout has 362 fields correctly targeting Task, and only
-    a genuine minority (38 Account, 23 EventRelation, etc.) targeting
-    something else. Comparing against the raw Veeva name would incorrectly
-    flag all 464; comparing against the majority (Task) correctly leaves
-    only the real ~62 outliers flagged.
-
-    NOTE: kept for backward compatibility; classify_elements itself now
-    uses determine_plausible_target_objects (plural) instead, since a
-    single 'winner' breaks layouts that legitimately span multiple real
-    objects (see that function's docstring).
-
-    Falls back to fallback_object (the object name the tool was actually
-    run with) when there's no clear registry data to determine a majority
-    from -- e.g. for Account, target.object IS 'Account' for the vast
-    majority anyway, so this changes nothing there."""
-    from collections import Counter
-    target_counts = Counter()
-    for el in raw_elements:
-        if el["element_type"] != "Field":
-            continue
-        key = registry_key(el["element_type"], el["api_name"], el["layout_section"])
-        reg_entry = registry_index.get(key)
-        if reg_entry:
-            obj = reg_entry["target"].get("object")
-            if obj:
-                target_counts[obj] += 1
-
-    if not target_counts:
-        return fallback_object
-
-    dominant_object, dominant_count = target_counts.most_common(1)[0]
-    total = sum(target_counts.values())
-    # Only trust the majority if it's genuinely a majority (>50%), not just
-    # the most common of many roughly-equal options.
-    if dominant_count / total > 0.5:
-        return dominant_object
-    return fallback_object
-
-
-def classify_elements(raw_elements, registry_index, source_object=None, specific_index=None):
-    """source_object: the object the layout being built actually belongs to
-    (e.g. 'Account'), used as a fallback -- see determine_effective_target_object
-    for why the real comparison basis is usually derived from the data
-    itself, not this raw input.
-
-    specific_index: optional (element_type, api_name, veeva_object) -> entry
-    lookup, from load_registry. When present and source_object is known,
-    tried FIRST -- catches fields that mean something genuinely different
-    per object (e.g. 'Name' = Address line 1 on Address_vod__c, but Account
-    Name on Account) that the generic index alone would get wrong."""
-    specific_index = specific_index or {}
-    plausible_target_objects = determine_plausible_target_objects(
-        raw_elements, registry_index, specific_index, source_object, source_object)
-    plausible_lower = {o.lower() for o in plausible_target_objects}
-
+def classify_elements(raw_elements, registry_index):
     classified = []
     for el in raw_elements:
         if el["element_type"].startswith("_"):
@@ -339,15 +189,7 @@ def classify_elements(raw_elements, registry_index, source_object=None, specific
                 })
 
         key = registry_key(el["element_type"], el["api_name"], el["layout_section"])
-        reg_entry = None
-        # Try the object-specific entry FIRST, when we know which object
-        # this layout belongs to -- catches fields repurposed with a
-        # different meaning per object (e.g. Name on Address_vod__c).
-        if source_object and el["element_type"] not in SECTION_SCOPED_TYPES:
-            specific_key = (el["element_type"], el["api_name"], source_object)
-            reg_entry = specific_index.get(specific_key)
-        if reg_entry is None:
-            reg_entry = registry_index.get(key)
+        reg_entry = registry_index.get(key)
 
         if reg_entry:
             action = reg_entry["action"]
@@ -355,63 +197,13 @@ def classify_elements(raw_elements, registry_index, source_object=None, specific
             # even if the classification itself says Direct/Map.
             if reg_entry["target"]["confidence"] in ("Low", "Medium") and action == "auto_generate":
                 action = "flag_manual_review"
-
-            # Cross-object safety check: only meaningful for Field/Related
-            # Cross-object safety check: ONLY meaningful for Fields.
-            # Related Lists are DIFFERENT -- their whole purpose is to show
-            # records from another/child object, so a different target
-            # object there is correct and expected, not a problem. (Caught
-            # this exact false-positive during testing: the check initially
-            # also applied to Related List, incorrectly flagging entries
-            # like Address_vod__c -> ContactPointAddresses -- a real,
-            # correct object difference, not a placement error.)
-            target_object = reg_entry["target"].get("object")
-            basis_suffix = ""
-            # Universal standard fields (Name, CreatedById, etc.) exist
-            # independently on almost every Salesforce object. Confirmed a
-            # real bug: our registry stores ONE answer per field name
-            # globally, so "Name" got recorded once against Account (true
-            # for the Account/HCO layout) and then wrongly reused for
-            # completely unrelated layouts like Address -- incorrectly
-            # blocking a field that was always fine, for the wrong reason.
-            # These field names are exempt from the cross-object check:
-            # their real target is always "whatever object this layout
-            # belongs to," never a fixed value from wherever they were
-            # first entered into the registry.
-            UNIVERSAL_FIELDS = {"Name", "Id", "OwnerId", "CreatedById", "CreatedDate",
-                                "LastModifiedById", "LastModifiedDate", "SystemModstamp", "IsDeleted"}
-            if (plausible_lower and target_object and el["element_type"] == "Field"
-                    and el["api_name"] not in UNIVERSAL_FIELDS
-                    and target_object.lower() not in plausible_lower):
-                action = "flag_decision_needed"
-                plausible_str = ", ".join(sorted(plausible_target_objects))
-                basis_suffix = (f" [BLOCKED: target object '{target_object}' is not among this layout's "
-                               f"plausible LSC object(s) ({plausible_str}) -- a Field cannot be placed "
-                               f"directly on a layout of a different object. Needs a related list, "
-                               f"a different page, or explicit scoping decision, not a guess.]")
-
             classified.append({
                 **el,
                 "registry_match": True,
                 "classification": reg_entry["classification"],
                 "target": reg_entry["target"],
                 "action": action,
-                "basis": reg_entry["basis"] + basis_suffix,
-                # Carry through display metadata when the registry has it
-                # (currently only entries converted from the Excel mapping
-                # files have this -- the original hand-built HCO entries
-                # don't, so these will be None for those, which is honest:
-                # we genuinely don't have that data for them).
-                "veeva_label": reg_entry.get("veeva_label"),
-                "veeva_datatype": reg_entry.get("veeva_datatype"),
-                "veeva_required": reg_entry.get("veeva_required"),
-                # Which Veeva object this SPECIFIC answer actually came
-                # from -- lets a reviewer directly verify the tool picked
-                # the right context (e.g. confirms this is the
-                # Address_vod__c-specific answer for a field, not an
-                # accidental cross-object mixup from a same-named field
-                # on a different object).
-                "veeva_object": reg_entry.get("veeva_object"),
+                "basis": reg_entry["basis"],
             })
         else:
             canon, basis = structural_default_classification(el)
@@ -553,8 +345,8 @@ def apply_org_verification(classified, describe_path):
 
 def run(xml_path, registry_path, source_object, source_layout, describe_path=None):
     raw_elements = extract_all(xml_path)
-    registry_index, registry_conflicts, specific_index = load_registry(registry_path)
-    classified = classify_elements(raw_elements, registry_index, source_object, specific_index)
+    registry_index, registry_conflicts = load_registry(registry_path)
+    classified = classify_elements(raw_elements, registry_index)
     inconsistencies = link_duplicates(classified)
 
     org_verification_summary = None

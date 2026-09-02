@@ -98,39 +98,9 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.title("Veeva \u2192 LSC Page Layout Accelerator")
+st.caption("Build: 2026-08-26-v2 (includes: object-Id-to-name resolution, "
+          "300s timeouts, always-show-candidates, generic layout search)")
 st.caption("Extract \u2192 Review & Approve \u2192 Generate \u2192 Validate \u2192 Deploy")
-
-# User Guide -- a single, consolidated place for anything that's
-# EXPLANATORY (concepts, terminology, how the workflow fits together)
-# rather than something needed to actually take an action. Per-row
-# reference links (RESOURCE_LINKS) stay where they are, since those are
-# contextual to a specific element type being reviewed, not general
-# background info -- only the general "how this works" content belongs
-# here, kept short and skimmable, not a wall of text.
-with st.popover("\u2139\ufe0f User Guide"):
-    st.markdown("""
-**How to use this tool, in order:**
-1. **Extract** \u2014 point it at a Veeva layout (upload a file, or fetch
-   directly from Veeva using the object + layout name).
-2. **Review & Approve** \u2014 confirm or correct what the tool proposes for
-   each field. Nothing gets built until you approve.
-3. **Generate** \u2014 builds the real LSC layout files from your approved
-   decisions.
-4. **Validate** \u2014 checks the generated files are structurally correct.
-5. **Deploy** \u2014 stages, dry-runs, and (with your confirmation) deploys
-   to the real target org.
-
-**What the classifications mean:**
-- **Direct** \u2014 a standard field, identical on both systems. Nothing to decide.
-- **Map** \u2014 a specific field with a confirmed answer (same name or different).
-- **Rebuild** \u2014 should still exist, but needs custom development \u2014 the
-  old way it worked doesn't carry over directly.
-- **Retire** \u2014 might not be needed anymore \u2014 flagged for you to confirm.
-- **Decision Needed** \u2014 genuinely unclear, needs your judgment.
-
-**What the flags mean:**
-\u2705 nothing to do \u00b7 \U0001F7E1 quick confirmation needed \u00b7 \U0001F534 needs your decision
-""")
 
 RESOURCE_LINKS = {
     "Field": [
@@ -237,7 +207,9 @@ with st.expander("Upload files & run extraction", expanded=(st.session_state.cla
     # NOTE: col2's code runs FIRST here, even though col1 still renders
     # visually on the LEFT and col2 on the RIGHT -- st.columns() already
     # reserved their screen positions above, so code order and visual
-    # order are independent.
+    # order are independent. This lets col1's "Load layouts" button (which
+    # needs veeva_org_alias) safely use a variable that's visually shown
+    # in col2, without a NameError.
     with col2:
         veeva_org_alias = st.text_input("Veeva org name", value="veevaSource")
         input_mode = st.radio("Veeva layout source", ["Upload file", "Fetch directly from Veeva org"], horizontal=True)
@@ -269,11 +241,18 @@ with st.expander("Upload files & run extraction", expanded=(st.session_state.cla
                 names = list_layout_names_for_object(sf_exe, object_name, veeva_org_alias, AUTO_SFDX_ROOT)
             st.session_state["available_layouts_for_object"] = names
 
-        # Layout Name -- ONE single input. When real layouts have been
-        # loaded, this field IS a dropdown of them; otherwise it's a plain
-        # text box. Same label, same session-state key either way.
+        # Layout Name -- ONE single input, not two overlapping ones. When
+        # real layouts have been loaded, this field IS a dropdown of them;
+        # otherwise it's a plain text box. Same label, same session-state
+        # key either way, so there's no separate "pick from dropdown" +
+        # "confirm in a different text field" redundancy.
         available = st.session_state.get("available_layouts_for_object")
         if available:
+            # Careful here: the key may already hold a value from earlier
+            # free-typing (e.g. the default "SP_Admin_Layout_HCO") that
+            # might NOT be among the real options just loaded. Passing an
+            # explicit, safely-computed index avoids Streamlit erroring on
+            # a stored value that isn't a valid choice.
             current_value = st.session_state.get("layout_name_input", "")
             default_index = available.index(current_value) if current_value in available else 0
             layout_name = st.selectbox("Layout Name", options=available, index=default_index, key="layout_name_input")
@@ -488,43 +467,43 @@ if st.session_state.classified:
             for label, url in links:
                 st.markdown(f"- [{label}]({url})")
 
-#   #  with st.expander("\U0001F916 Optional: get an AI second opinion on flagged rows", expanded=False):
-#         st.caption("This calls Claude directly from your machine to sanity-check anything "
-#                    "marked 'Decision Needed' or low confidence \u2014 purely advisory, it does NOT "
-#                    "change any row automatically. Requires your own Anthropic API key (not stored, "
-#                    "only used for this session).")
-#         api_key = st.text_input("Anthropic API key", type="password", key="anthropic_key")
-#         if st.button("Get AI second opinion on flagged rows") and api_key:
-#             try:
-#                 import anthropic
-#                 client = anthropic.Anthropic(api_key=api_key)
-#                 flagged = [e for e in classified if e["action"] in
-#                            ("flag_decision_needed", "flag_no_registry_entry", "flag_manual_review")]
-#                 if not flagged:
-#                     st.info("No flagged rows to review \u2014 everything already matched confidently.")
-#                 else:
-#                     summary_lines = [f"- {e['element_type']} '{e['api_name']}' in section "
-#                                       f"'{e['layout_section']}': currently flagged as {e['action']}. "
-#                                       f"Basis: {e.get('basis', 'none')}" for e in flagged[:20]]
-#                     prompt = (
-#                         "You are reviewing a Veeva-to-Salesforce-LSC page layout migration. "
-#                         "For each flagged item below, give a ONE-LINE suggestion of what a human "
-#                         "reviewer should check or consider, in plain language. Do not invent exact "
-#                         "API names you cannot know. Be concise.\n\n" + "\n".join(summary_lines)
-#                     )
-#                     with st.spinner("Asking Claude..."):
-#                         resp = client.messages.create(
-#                             model="claude-sonnet-4-6",
-#                             max_tokens=1000,
-#                             messages=[{"role": "user", "content": prompt}],
-#                         )
-#                     ai_text = "".join(b.text for b in resp.content if b.type == "text")
-#                     st.markdown("**AI second opinion (advisory only \u2014 review before trusting):**")
-#                     st.markdown(ai_text)
-#             except Exception as e:
-#                 st.error(f"Could not reach Claude: {e}")
-#         elif not api_key:
-#             st.caption("Enter an API key above to enable this.")
+    with st.expander("\U0001F916 Optional: get an AI second opinion on flagged rows", expanded=False):
+        st.caption("This calls Claude directly from your machine to sanity-check anything "
+                   "marked 'Decision Needed' or low confidence \u2014 purely advisory, it does NOT "
+                   "change any row automatically. Requires your own Anthropic API key (not stored, "
+                   "only used for this session).")
+        api_key = st.text_input("Anthropic API key", type="password", key="anthropic_key")
+        if st.button("Get AI second opinion on flagged rows") and api_key:
+            try:
+                import anthropic
+                client = anthropic.Anthropic(api_key=api_key)
+                flagged = [e for e in classified if e["action"] in
+                           ("flag_decision_needed", "flag_no_registry_entry", "flag_manual_review")]
+                if not flagged:
+                    st.info("No flagged rows to review \u2014 everything already matched confidently.")
+                else:
+                    summary_lines = [f"- {e['element_type']} '{e['api_name']}' in section "
+                                      f"'{e['layout_section']}': currently flagged as {e['action']}. "
+                                      f"Basis: {e.get('basis', 'none')}" for e in flagged[:20]]
+                    prompt = (
+                        "You are reviewing a Veeva-to-Salesforce-LSC page layout migration. "
+                        "For each flagged item below, give a ONE-LINE suggestion of what a human "
+                        "reviewer should check or consider, in plain language. Do not invent exact "
+                        "API names you cannot know. Be concise.\n\n" + "\n".join(summary_lines)
+                    )
+                    with st.spinner("Asking Claude..."):
+                        resp = client.messages.create(
+                            model="claude-sonnet-4-6",
+                            max_tokens=1000,
+                            messages=[{"role": "user", "content": prompt}],
+                        )
+                    ai_text = "".join(b.text for b in resp.content if b.type == "text")
+                    st.markdown("**AI second opinion (advisory only \u2014 review before trusting):**")
+                    st.markdown(ai_text)
+            except Exception as e:
+                st.error(f"Could not reach Claude: {e}")
+        elif not api_key:
+            st.caption("Enter an API key above to enable this.")
 
     st.caption("Edit Action / Target / add a comment for anything that needs a human call. "
                "Nothing is built until you click Approve below.")
@@ -599,20 +578,23 @@ if st.session_state.classified:
     df["_sort_priority"] = df["\u26a0"].map(flag_priority)
     df = df.sort_values("_sort_priority", kind="stable").drop(columns=["_sort_priority"]).reset_index(drop=True)
 
-    # Slimmed down per request: only the LIVE, per-run counts stay inline
-    # here -- the static definitions of what each term means now live in
-    # the User Guide popover (see top of page) instead of repeating a wall
-    # of text every time this table renders.
     red_count = (df["\u26a0"] == "\U0001F534").sum()
     yellow_count = (df["\u26a0"] == "\U0001F7E1").sum()
     green_count = (df["\u26a0"] == "\u2705").sum()
     st.markdown(f"""
 <div style="background-color:#F0F4FA; border:1px solid #005CD9; border-radius:6px;
-            padding:10px 18px; color:#001E96; margin-bottom:12px;">
-\u2705 <b>{green_count} will be built automatically</b> \u2014 nothing to do.
-\U0001F7E1 <b>{yellow_count} need a quick confirmation.</b>
-\U0001F534 <b>{red_count} need your decision</b> \u2014 sorted to the top.
-<span style="color:#005CD9;">(See the User Guide above for what each term means.)</span>
+            padding:14px 18px; color:#001E96; margin-bottom:12px;">
+<b>How to read this table:</b> \u2705 <b>{green_count} will be built automatically</b> \u2014
+nothing to do. \U0001F7E1 <b>{yellow_count} need a quick confirmation</b> \u2014 the answer is
+proposed, just needs a yes. \U0001F534 <b>{red_count} need your decision</b> \u2014 rows are
+sorted so these appear first.
+<br><br>
+<b>What the terms mean:</b><br>
+&bull; <b>Direct</b> \u2014 a standard field that's identical on both systems. Nothing was decided, it just carries over.<br>
+&bull; <b>Map</b> \u2014 a specific field where we've confirmed exactly what it becomes (same name or different).<br>
+&bull; <b>Rebuild</b> \u2014 this should still exist, but the old way it worked can't carry over directly \u2014 needs custom development.<br>
+&bull; <b>Retire</b> \u2014 this might not be needed anymore \u2014 flagged for you to confirm: keep it, or drop it?<br>
+&bull; <b>Decision Needed</b> \u2014 genuinely unclear, needs your judgment before we can proceed.
 </div>
 """, unsafe_allow_html=True)
 
@@ -620,46 +602,39 @@ if st.session_state.classified:
                        "flag_retire", "flag_decision_needed", "flag_no_registry_entry",
                        "informational_only"]
 
-    # Commented out (kept, not deleted, for potential future re-enable) --
-    # "Bulk actions" feature, per request that it wasn't adding much value.
-    # Using real '#' comments, not a triple-quoted """...""" string -- that
-    # approach is fragile and previously caused a real "unexpected indent"
-    # error; a '#' comment is always safe regardless of surrounding
-    # indentation, since the parser skips it entirely.
-    #
-    # st.markdown("**Bulk actions** \u2014 useful when reviewing many rows at once (e.g. a new layout like HCP):")
-    # bulk_col1, bulk_col2, bulk_col3 = st.columns([2, 2, 1])
-    # with bulk_col1:
-    #     bulk_confidence = st.selectbox("Approve all rows with confidence \u2265",
-    #                                     ["High only", "High + Medium", "All (not recommended)"])
-    # with bulk_col2:
-    #     st.caption("Only affects rows currently proposed 'auto_generate' or 'Direct/Map' \u2014 "
-    #                "never bulk-approves anything already flagged Rebuild/Retire/Decision Needed.")
-    # with bulk_col3:
-    #     bulk_apply = st.button("Apply bulk approval")
-    #
-    # if bulk_apply:
-    #     threshold = {"High only": {"High"}, "High + Medium": {"High", "Medium"},
-    #                  "All (not recommended)": {"High", "Medium", "Low", "N/A"}}[bulk_confidence]
-    #     applied_count = 0
-    #     for i, e in enumerate(classified):
-    #         conf = e.get("target", {}).get("confidence", "N/A")
-    #         # Only promotes rows sitting at flag_manual_review (a registry match
-    #         # that already HAS a proposed target, just needed confirmation because
-    #         # of its confidence level) — never touches flag_no_registry_entry
-    #         # (no target exists at all), flag_rebuild/retire/decision_needed
-    #         # (genuine judgment calls), or rows already auto_generate.
-    #         if e.get("action") == "flag_manual_review" and conf in threshold:
-    #             df.loc[df["idx"] == i, "Status (system)"] = "auto_generate"
-    #             applied_count += 1
-    #     if applied_count:
-    #         st.success(f"Bulk-confirmed {applied_count} row(s) at '{bulk_confidence}' confidence "
-    #                    f"from 'needs review' to 'auto_generate'. Rebuild/Retire/Decision-Needed rows "
-    #                    f"and anything with no registry target were left untouched \u2014 those still "
-    #                    f"need individual review below.")
-    #     else:
-    #         st.info("No rows matched \u2014 either nothing is at 'flag_manual_review', or none meet "
-    #                "the selected confidence threshold.")
+    st.markdown("**Bulk actions** \u2014 useful when reviewing many rows at once (e.g. a new layout like HCP):")
+    bulk_col1, bulk_col2, bulk_col3 = st.columns([2, 2, 1])
+    with bulk_col1:
+        bulk_confidence = st.selectbox("Approve all rows with confidence \u2265",
+                                        ["High only", "High + Medium", "All (not recommended)"])
+    with bulk_col2:
+        st.caption("Only affects rows currently proposed 'auto_generate' or 'Direct/Map' \u2014 "
+                   "never bulk-approves anything already flagged Rebuild/Retire/Decision Needed.")
+    with bulk_col3:
+        bulk_apply = st.button("Apply bulk approval")
+
+    if bulk_apply:
+        threshold = {"High only": {"High"}, "High + Medium": {"High", "Medium"},
+                     "All (not recommended)": {"High", "Medium", "Low", "N/A"}}[bulk_confidence]
+        applied_count = 0
+        for i, e in enumerate(classified):
+            conf = e.get("target", {}).get("confidence", "N/A")
+            # Only promotes rows sitting at flag_manual_review (a registry match
+            # that already HAS a proposed target, just needed confirmation because
+            # of its confidence level) — never touches flag_no_registry_entry
+            # (no target exists at all), flag_rebuild/retire/decision_needed
+            # (genuine judgment calls), or rows already auto_generate.
+            if e.get("action") == "flag_manual_review" and conf in threshold:
+                df.loc[df["idx"] == i, "Status (system)"] = "auto_generate"
+                applied_count += 1
+        if applied_count:
+            st.success(f"Bulk-confirmed {applied_count} row(s) at '{bulk_confidence}' confidence "
+                       f"from 'needs review' to 'auto_generate'. Rebuild/Retire/Decision-Needed rows "
+                       f"and anything with no registry target were left untouched \u2014 those still "
+                       f"need individual review below.")
+        else:
+            st.info("No rows matched \u2014 either nothing is at 'flag_manual_review', or none meet "
+                   "the selected confidence threshold.")
 
     edited_df = st.data_editor(
         df,
@@ -813,8 +788,8 @@ if st.session_state.generated:
     # -----------------------------------------------------------------
     st.header("4. Validate")
     with st.expander("Run validation checks", expanded=True):
-        st.caption("Checks the generated output for internal consistency \u2014 makes sure nothing "
-                   "flagged for your review accidentally leaked into the final Salesforce files.")
+        st.caption("Self-consistency check always runs. Reference comparison is optional "
+                   "(only if you have a known-correct hand-built file to check against, e.g. HCO).")
 
         gen_layout_path = gen_flexipage_path = report_json_path = None
         try:
@@ -844,37 +819,29 @@ if st.session_state.generated:
             st.exception(e)
 
         st.subheader("Optional: compare against a known-correct reference")
-        # Commented out (kept, not deleted, for potential future
-        # re-enable) -- this specific feature needs a manually-migrated
-        # reference layout to compare against, which was only ever useful
-        # for OUR internal proving process (e.g. HCO's 41/41 match), not
-        # something a real client would have available in normal use.
-        # Using real '#' comments -- always safe regardless of surrounding
-        # indentation, unlike a triple-quoted string.
-        #
-        # ref_layout_file = st.file_uploader("Reference Page Layout XML (optional)", type=["xml"], key="ref_layout")
-        # ref_flexipage_file = st.file_uploader("Reference Flexipage XML (optional)", type=["xml"], key="ref_flexipage")
-        #
-        # if (ref_layout_file or ref_flexipage_file) and st.button("Run reference comparison"):
-        #     try:
-        #         if ref_layout_file and gen_layout_path:
-        #             with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
-        #                 f.write(ref_layout_file.getvalue())
-        #                 ref_layout_path = f.name
-        #             result = compare_layouts(ref_layout_path, gen_layout_path)
-        #             st.write("**Page Layout comparison:**", result["status"])
-        #             st.json(result)
-        #
-        #         if ref_flexipage_file and gen_flexipage_path:
-        #             with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
-        #                 f.write(ref_flexipage_file.getvalue())
-        #                 ref_flexipage_path = f.name
-        #             result = compare_flexipages(ref_flexipage_path, gen_flexipage_path)
-        #             st.write("**Flexipage comparison:**", result["status"])
-        #             st.json(result)
-        #     except Exception as e:
-        #         st.error("Reference comparison hit an error. Full details below:")
-        #         st.exception(e)
+        ref_layout_file = st.file_uploader("Reference Page Layout XML (optional)", type=["xml"], key="ref_layout")
+        ref_flexipage_file = st.file_uploader("Reference Flexipage XML (optional)", type=["xml"], key="ref_flexipage")
+
+        if (ref_layout_file or ref_flexipage_file) and st.button("Run reference comparison"):
+            try:
+                if ref_layout_file and gen_layout_path:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
+                        f.write(ref_layout_file.getvalue())
+                        ref_layout_path = f.name
+                    result = compare_layouts(ref_layout_path, gen_layout_path)
+                    st.write("**Page Layout comparison:**", result["status"])
+                    st.json(result)
+
+                if ref_flexipage_file and gen_flexipage_path:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
+                        f.write(ref_flexipage_file.getvalue())
+                        ref_flexipage_path = f.name
+                    result = compare_flexipages(ref_flexipage_path, gen_flexipage_path)
+                    st.write("**Flexipage comparison:**", result["status"])
+                    st.json(result)
+            except Exception as e:
+                st.error("Reference comparison hit an error. Full details below:")
+                st.exception(e)
 
         for p in (gen_layout_path, gen_flexipage_path, report_json_path):
             if p and os.path.exists(p):

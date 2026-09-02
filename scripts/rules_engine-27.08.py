@@ -161,96 +161,20 @@ def load_registry(path):
     index = {}
     conflicts = []
     for key, group in grouped.items():
-        # A disagreement is only a REAL conflict if it involves two entries
-        # that could actually compete for the same lookup at runtime:
-        #   - two entries that BOTH lack a veeva_object (both would only
-        #     ever serve as the generic fallback -- if they disagree, we
-        #     genuinely can't tell which one wins), or
-        #   - two entries that share the SAME veeva_object (a genuine
-        #     specific-index collision).
-        # A generic entry (no object) vs. any object-specific entry is
-        # NEVER a real conflict -- classify_elements always tries the
-        # specific index first when the object is known, so the generic
-        # entry only kicks in as a fallback for objects with no specific
-        # entry at all. They don't compete in practice.
-        generic_entries = [g for g in group if not g.get("veeva_object")]
-        by_object = defaultdict(list)
-        for g in group:
-            if g.get("veeva_object"):
-                by_object[g["veeva_object"]].append(g)
-
-        real_conflict = False
-        for entries in [generic_entries] + list(by_object.values()):
-            if len(entries) < 2:
-                continue
-            base = entries[0]
-            for other in entries[1:]:
-                if (other["classification"]["canonical"] != base["classification"]["canonical"]
-                        or other["action"] != base["action"]):
-                    real_conflict = True
-                    break
-            if real_conflict:
+        first = group[0]
+        for other in group[1:]:
+            if (other["classification"]["canonical"] != first["classification"]["canonical"]
+                    or other["action"] != first["action"]):
+                conflicts.append({
+                    "key": key,
+                    "sections_involved": [g["layout_section"] for g in group],
+                    "conflicting_classifications": [g["classification"]["canonical"] for g in group],
+                    "conflicting_actions": [g["action"] for g in group],
+                })
                 break
-
-        if real_conflict:
-            conflicts.append({
-                "key": key,
-                "sections_involved": [g["layout_section"] for g in group],
-                "conflicting_classifications": [g["classification"]["canonical"] for g in group],
-                "conflicting_actions": [g["action"] for g in group],
-            })
-        index[key] = group[0]
+        index[key] = first
 
     return index, conflicts, specific_index
-
-
-def determine_plausible_target_objects(raw_elements, registry_index, specific_index, source_object, fallback_object):
-    """Figures out which LSC object(s) this layout's fields legitimately
-    belong to -- can be MORE THAN ONE, not just a single 'winner'.
-
-    Real, confirmed problem with the single-majority version below: an
-    Address_vod__c layout's fields split genuinely and evenly across
-    Address (4 fields) and ContactPointPhone (4 fields) -- neither reaches
-    a >50% majority, so that logic falls back to comparing against the
-    literal Veeva object name 'Address_vod__c', which no real field will
-    ever match (that object doesn't exist in LSC at all) -- blocking
-    EVERY field on the layout, including ones that were confidently,
-    correctly mapped (e.g. City -> Address.City, High confidence).
-
-    Better model: any object that a MEANINGFUL cluster of fields agree on
-    (not just a singleton) is treated as legitimate for this layout. Only
-    a genuine rare outlier -- a target object basically no other field
-    agrees with -- gets flagged.
-
-    Returns a set of object names considered legitimate for this layout.
-    """
-    from collections import Counter
-    target_counts = Counter()
-    for el in raw_elements:
-        if el["element_type"] != "Field":
-            continue
-        reg_entry = None
-        if source_object and specific_index:
-            reg_entry = specific_index.get((el["element_type"], el["api_name"], source_object))
-        if reg_entry is None:
-            key = registry_key(el["element_type"], el["api_name"], el["layout_section"])
-            reg_entry = registry_index.get(key)
-        if reg_entry:
-            obj = reg_entry["target"].get("object")
-            if obj:
-                target_counts[obj] += 1
-
-    if not target_counts:
-        return {fallback_object} if fallback_object else set()
-
-    total = sum(target_counts.values())
-    legitimate = set()
-    top_count = target_counts.most_common(1)[0][1]
-    for obj, count in target_counts.items():
-        if count == top_count or (count >= 2 and count / total >= 0.15):
-            legitimate.add(obj)
-
-    return legitimate
 
 
 def determine_effective_target_object(raw_elements, registry_index, fallback_object):
@@ -262,11 +186,6 @@ def determine_effective_target_object(raw_elements, registry_index, fallback_obj
     something else. Comparing against the raw Veeva name would incorrectly
     flag all 464; comparing against the majority (Task) correctly leaves
     only the real ~62 outliers flagged.
-
-    NOTE: kept for backward compatibility; classify_elements itself now
-    uses determine_plausible_target_objects (plural) instead, since a
-    single 'winner' breaks layouts that legitimately span multiple real
-    objects (see that function's docstring).
 
     Falls back to fallback_object (the object name the tool was actually
     run with) when there's no clear registry data to determine a majority
@@ -308,9 +227,7 @@ def classify_elements(raw_elements, registry_index, source_object=None, specific
     per object (e.g. 'Name' = Address line 1 on Address_vod__c, but Account
     Name on Account) that the generic index alone would get wrong."""
     specific_index = specific_index or {}
-    plausible_target_objects = determine_plausible_target_objects(
-        raw_elements, registry_index, specific_index, source_object, source_object)
-    plausible_lower = {o.lower() for o in plausible_target_objects}
+    effective_target_object = determine_effective_target_object(raw_elements, registry_index, source_object)
 
     classified = []
     for el in raw_elements:
@@ -380,15 +297,14 @@ def classify_elements(raw_elements, registry_index, source_object=None, specific
             # first entered into the registry.
             UNIVERSAL_FIELDS = {"Name", "Id", "OwnerId", "CreatedById", "CreatedDate",
                                 "LastModifiedById", "LastModifiedDate", "SystemModstamp", "IsDeleted"}
-            if (plausible_lower and target_object and el["element_type"] == "Field"
+            if (effective_target_object and target_object and el["element_type"] == "Field"
                     and el["api_name"] not in UNIVERSAL_FIELDS
-                    and target_object.lower() not in plausible_lower):
+                    and target_object.lower() != effective_target_object.lower()):
                 action = "flag_decision_needed"
-                plausible_str = ", ".join(sorted(plausible_target_objects))
-                basis_suffix = (f" [BLOCKED: target object '{target_object}' is not among this layout's "
-                               f"plausible LSC object(s) ({plausible_str}) -- a Field cannot be placed "
-                               f"directly on a layout of a different object. Needs a related list, "
-                               f"a different page, or explicit scoping decision, not a guess.]")
+                basis_suffix = (f" [BLOCKED: target object '{target_object}' does not match this "
+                               f"layout's effective LSC object '{effective_target_object}' -- a Field "
+                               f"cannot be placed directly on a layout of a different object. Needs a "
+                               f"related list, a different page, or explicit scoping decision, not a guess.]")
 
             classified.append({
                 **el,
@@ -405,13 +321,6 @@ def classify_elements(raw_elements, registry_index, source_object=None, specific
                 "veeva_label": reg_entry.get("veeva_label"),
                 "veeva_datatype": reg_entry.get("veeva_datatype"),
                 "veeva_required": reg_entry.get("veeva_required"),
-                # Which Veeva object this SPECIFIC answer actually came
-                # from -- lets a reviewer directly verify the tool picked
-                # the right context (e.g. confirms this is the
-                # Address_vod__c-specific answer for a field, not an
-                # accidental cross-object mixup from a same-named field
-                # on a different object).
-                "veeva_object": reg_entry.get("veeva_object"),
             })
         else:
             canon, basis = structural_default_classification(el)

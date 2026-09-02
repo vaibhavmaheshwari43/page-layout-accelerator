@@ -813,8 +813,8 @@ if st.session_state.generated:
     # -----------------------------------------------------------------
     st.header("4. Validate")
     with st.expander("Run validation checks", expanded=True):
-        st.caption("Checks the generated output for internal consistency \u2014 makes sure nothing "
-                   "flagged for your review accidentally leaked into the final Salesforce files.")
+        st.caption("Self-consistency check always runs. Reference comparison is optional "
+                   "(only if you have a known-correct hand-built file to check against, e.g. HCO).")
 
         gen_layout_path = gen_flexipage_path = report_json_path = None
         try:
@@ -844,37 +844,29 @@ if st.session_state.generated:
             st.exception(e)
 
         st.subheader("Optional: compare against a known-correct reference")
-        # Commented out (kept, not deleted, for potential future
-        # re-enable) -- this specific feature needs a manually-migrated
-        # reference layout to compare against, which was only ever useful
-        # for OUR internal proving process (e.g. HCO's 41/41 match), not
-        # something a real client would have available in normal use.
-        # Using real '#' comments -- always safe regardless of surrounding
-        # indentation, unlike a triple-quoted string.
-        #
-        # ref_layout_file = st.file_uploader("Reference Page Layout XML (optional)", type=["xml"], key="ref_layout")
-        # ref_flexipage_file = st.file_uploader("Reference Flexipage XML (optional)", type=["xml"], key="ref_flexipage")
-        #
-        # if (ref_layout_file or ref_flexipage_file) and st.button("Run reference comparison"):
-        #     try:
-        #         if ref_layout_file and gen_layout_path:
-        #             with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
-        #                 f.write(ref_layout_file.getvalue())
-        #                 ref_layout_path = f.name
-        #             result = compare_layouts(ref_layout_path, gen_layout_path)
-        #             st.write("**Page Layout comparison:**", result["status"])
-        #             st.json(result)
-        #
-        #         if ref_flexipage_file and gen_flexipage_path:
-        #             with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
-        #                 f.write(ref_flexipage_file.getvalue())
-        #                 ref_flexipage_path = f.name
-        #             result = compare_flexipages(ref_flexipage_path, gen_flexipage_path)
-        #             st.write("**Flexipage comparison:**", result["status"])
-        #             st.json(result)
-        #     except Exception as e:
-        #         st.error("Reference comparison hit an error. Full details below:")
-        #         st.exception(e)
+        ref_layout_file = st.file_uploader("Reference Page Layout XML (optional)", type=["xml"], key="ref_layout")
+        ref_flexipage_file = st.file_uploader("Reference Flexipage XML (optional)", type=["xml"], key="ref_flexipage")
+
+        if (ref_layout_file or ref_flexipage_file) and st.button("Run reference comparison"):
+            try:
+                if ref_layout_file and gen_layout_path:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
+                        f.write(ref_layout_file.getvalue())
+                        ref_layout_path = f.name
+                    result = compare_layouts(ref_layout_path, gen_layout_path)
+                    st.write("**Page Layout comparison:**", result["status"])
+                    st.json(result)
+
+                if ref_flexipage_file and gen_flexipage_path:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as f:
+                        f.write(ref_flexipage_file.getvalue())
+                        ref_flexipage_path = f.name
+                    result = compare_flexipages(ref_flexipage_path, gen_flexipage_path)
+                    st.write("**Flexipage comparison:**", result["status"])
+                    st.json(result)
+            except Exception as e:
+                st.error("Reference comparison hit an error. Full details below:")
+                st.exception(e)
 
         for p in (gen_layout_path, gen_flexipage_path, report_json_path):
             if p and os.path.exists(p):
