@@ -129,7 +129,8 @@ with st.popover("\u2139\ufe0f User Guide"):
 - **Decision Needed** \u2014 genuinely unclear, needs your judgment.
 
 **What the flags mean:**
-\u2705 nothing to do \u00b7 \U0001F7E1 quick confirmation needed \u00b7 \U0001F534 needs your decision
+\u2705 nothing to do \u00b7 \U0001F7E1 quick confirmation needed \u00b7 \U0001F534 genuinely undecided \u00b7
+\U0001F7E0 decided as Retire, needs sign-off \u00b7 \U0001F7E3 decided as Rebuild, needs dev work
 """)
 
 RESOURCE_LINKS = {
@@ -568,7 +569,11 @@ if st.session_state.classified:
         if action_code == "auto_generate" and target_field:
             recommended = f"Build automatically \u2192 {target_field}" + (f" on {target_obj}" if target_obj else "")
         elif action_code == "flag_manual_review":
-            recommended = f"Confirm mapping to {target_field}" + (f" on {target_obj}" if target_obj else "") + ", then build"
+            # No more "Confirmed" checkbox -- confirming a quick-confirmation
+            # row now means directly changing Status (system) to
+            # auto_generate, which the sync correctly detects as a real edit.
+            recommended = (f"Proposed: {target_field}" + (f" on {target_obj}" if target_obj else "")
+                          + " \u2014 change Status to auto_generate to confirm and build")
         elif action_code == "flag_rebuild":
             recommended = "Needs a custom rebuild \u2014 no direct LSC equivalent"
         elif action_code == "flag_retire":
@@ -576,7 +581,7 @@ if st.session_state.classified:
             if e.get("behavior") == "Required":
                 recommended = "\u26a0\ufe0f SUSPICIOUS RETIRE: this field is Required in Veeva \u2014 " + recommended
         elif action_code == "flag_decision_needed":
-            recommended = "Needs a human decision before proceeding"
+            recommended = "Genuinely unclear \u2014 needs your judgment before proceeding"
             if e.get("classification", {}).get("canonical") in ("Map", "Direct") and not (target_field and target_obj):
                 recommended = "\u26a0\ufe0f Marked Map/Direct but has NO target yet \u2014 fill in Target Object + Target API Name before this can build"
         elif action_code == "flag_no_registry_entry":
@@ -584,17 +589,26 @@ if st.session_state.classified:
         else:
             recommended = "-"
 
+        # 5 distinct flags, not 3 -- Decision Needed / Retire / Rebuild used
+        # to all show as the same red circle, which hid a real difference:
+        # Decision Needed is genuinely unclear, while Retire/Rebuild have
+        # ALREADY been decided and just need follow-through (sign-off, dev
+        # work), not a judgment call. Distinct colors make that visible at
+        # a glance instead of requiring a click into each row.
         if action_code == "auto_generate":
             flag = "\u2705"
         elif action_code == "flag_manual_review":
             flag = "\U0001F7E1"
+        elif action_code == "flag_retire":
+            flag = "\U0001F7E0"  # orange -- already decided, needs sign-off
+        elif action_code == "flag_rebuild":
+            flag = "\U0001F7E3"  # purple -- already decided, needs dev work
         else:
-            flag = "\U0001F534"
+            flag = "\U0001F534"  # red -- genuinely undecided (flag_decision_needed, flag_no_registry_entry)
 
         rows.append({
             "idx": i,
             "\u26a0": flag,
-            "Confirmed": False,
             "Classification": e.get("classification", {}).get("canonical", "-"),
             "Section": e["layout_section"],
             "Type": e["element_type"],
@@ -620,7 +634,7 @@ if st.session_state.classified:
             "Candidates (from org)": candidates_str,
         })
     df = pd.DataFrame(rows)
-    flag_priority = {"\U0001F534": 0, "\U0001F7E1": 1, "\u2705": 2}
+    flag_priority = {"\U0001F534": 0, "\U0001F7E0": 1, "\U0001F7E3": 1, "\U0001F7E1": 2, "\u2705": 3}
     df["_sort_priority"] = df["\u26a0"].map(flag_priority)
     df = df.sort_values("_sort_priority", kind="stable").drop(columns=["_sort_priority"]).reset_index(drop=True)
 
@@ -687,8 +701,12 @@ if st.session_state.classified:
             return "\u2705"
         elif status == "flag_manual_review":
             return "\U0001F7E1"
+        elif status == "flag_retire":
+            return "\U0001F7E0"  # orange -- already decided, needs sign-off
+        elif status == "flag_rebuild":
+            return "\U0001F7E3"  # purple -- already decided, needs dev work
         else:
-            return "\U0001F534"
+            return "\U0001F534"  # red -- genuinely undecided
 
     # If a previous edit already produced a synced/corrected state, show
     # THAT (not the freshly-rebuilt proposal) -- so corrections from the
@@ -698,9 +716,14 @@ if st.session_state.classified:
         display_df = df
 
     # --- Filter by category -- display-only, never loses rows -------------
+    # 5 options now, matching the 5 distinct flag colors -- Decision Needed,
+    # Retire, and Rebuild used to be lumped as one "red" filter option,
+    # which hid the same real distinction the colors now show.
     FILTER_OPTIONS = {
-        "\U0001F534 Needs your decision": "\U0001F534",
-        "\U0001F7E1 Needs quick confirmation": "\U0001F7E1",
+        "\U0001F534 Decision Needed": "\U0001F534",
+        "\U0001F7E0 Retire": "\U0001F7E0",
+        "\U0001F7E3 Rebuild": "\U0001F7E3",
+        "\U0001F7E1 Quick Confirmation": "\U0001F7E1",
         "\u2705 Will auto-build": "\u2705",
     }
     selected_filters = st.multiselect(
@@ -720,11 +743,6 @@ if st.session_state.classified:
             "idx": None,  # hide internal index
             "Classification": st.column_config.SelectboxColumn(options=CLASSIFICATION_OPTIONS),
             "Status (system)": st.column_config.SelectboxColumn(options=action_options),
-            "Confirmed": st.column_config.CheckboxColumn(
-                help="For 'quick confirmation' rows: tick this to confirm the proposed "
-                     "mapping is correct as-is. Re-selecting the same Classification value "
-                     "doesn't register as an edit, so this checkbox exists specifically for "
-                     "confirming without changing anything."),
             "Recommended Action": st.column_config.TextColumn(width=280),
             "Basis": st.column_config.TextColumn(width=420),
             "Reviewer Comment": st.column_config.TextColumn(width="medium"),
@@ -734,9 +752,14 @@ if st.session_state.classified:
         key="review_editor",
     )
 
-    # --- Sync: Classification <-> Status, plus the Confirmed checkbox -----
+    # --- Sync: Classification <-> Status ------------------------------------
     # Diff against the LAST synced state (or the original proposal, on the
     # very first render) to figure out what actually changed this time.
+    # No more "Confirmed" checkbox -- now that Decision Needed/Retire/Rebuild
+    # are visually distinct, confirming a quick-confirmation (yellow) row is
+    # done by directly changing Status to auto_generate, which the sync
+    # correctly detects as a real edit (unlike re-selecting the same
+    # Classification value, which never registers as a change).
     prev_state = st.session_state.get("review_synced_state")
     if prev_state is None or len(prev_state) != len(display_df):
         prev_state = df
@@ -744,65 +767,35 @@ if st.session_state.classified:
 
     correction_happened = False
     corrected_rows = []
-    toast_messages = []  # UX polish only -- immediate feedback per change, doesn't touch sync logic itself
+    just_blocked_fields = []  # rows that JUST got blocked this render -- for the upfront warning
     visible_idx_set = set(edited_visible_df["idx"]) if len(edited_visible_df) else set()
     for _, row in edited_visible_df.iterrows():
         row = row.copy()
         prev_row = prev_by_idx.get(row["idx"])
         classification_changed = prev_row is not None and row["Classification"] != prev_row["Classification"]
         status_changed = prev_row is not None and row["Status (system)"] != prev_row["Status (system)"]
-        confirmed_just_ticked = (prev_row is not None and not prev_row.get("Confirmed", False)
-                                  and row.get("Confirmed", False))
-        row_changed_this_render = False
 
         if classification_changed:
             new_status = CLASSIFICATION_TO_STATUS.get(row["Classification"])
             if new_status:
                 row["Status (system)"] = new_status
                 correction_happened = True
-                row_changed_this_render = True
-        elif confirmed_just_ticked and prev_row["Status (system)"] == "flag_manual_review":
-            # Explicit confirmation for a "quick confirmation" row -- this
-            # is the mechanism for "Map to Map" style confirmations that a
-            # dropdown re-selection can never reliably detect as an edit.
-            row["Status (system)"] = "auto_generate"
-            correction_happened = True
-            row_changed_this_render = True
         elif status_changed:
             new_classification = STATUS_TO_CLASSIFICATION.get(row["Status (system)"])
             if new_classification:
                 row["Classification"] = new_classification
                 correction_happened = True
-                row_changed_this_render = True
 
         # Safety re-check: never let a row settle as auto-buildable with a
         # blank target -- force it back to needing a decision instead.
-        blocked_by_blank_target = False
         if row["Status (system)"] == "auto_generate" and (row["Target Object"] == "-" or row["Target API Name"] == "-"):
+            was_already_blocked = prev_row is not None and prev_row["Status (system)"] == "flag_decision_needed"
             row["Status (system)"] = "flag_decision_needed"
             row["Recommended Action"] = ("\u26a0\ufe0f Marked Map/Direct but has NO target yet \u2014 "
                                          "fill in Target Object + Target API Name before this can build")
             correction_happened = True
-            row_changed_this_render = True
-            blocked_by_blank_target = True
-
-        # Immediate feedback, based on the FINAL state after all checks --
-        # pure UX polish, doesn't change what actually happened, just makes
-        # it clearly visible the moment it happens instead of only showing
-        # up silently in the counts/change-summary further down.
-        if row_changed_this_render:
-            field_label = row["Veeva API Name"]
-            if blocked_by_blank_target:
-                toast_messages.append(f"\u270f\ufe0f **{field_label}**: almost there \u2014 add a Target Object "
-                                      f"+ Target API Name to finish this mapping")
-            elif row["Status (system)"] == "auto_generate":
-                toast_messages.append(f"\u2705 **{field_label}**: will build automatically")
-            elif row["Status (system)"] == "flag_retire":
-                toast_messages.append(f"\U0001F534 **{field_label}**: marked for removal \u2014 flagged for sign-off")
-            elif row["Status (system)"] == "flag_rebuild":
-                toast_messages.append(f"\U0001F534 **{field_label}**: marked for a custom rebuild")
-            elif row["Status (system)"] == "flag_decision_needed":
-                toast_messages.append(f"\U0001F534 **{field_label}**: flagged for your decision")
+            if not was_already_blocked:
+                just_blocked_fields.append(row["Veeva API Name"])
 
         row["\u26a0"] = _flag_for_status(row["Status (system)"])
         corrected_rows.append(row)
@@ -816,31 +809,39 @@ if st.session_state.classified:
     corrected_df = pd.DataFrame(corrected_rows).sort_values("idx").reset_index(drop=True)
     st.session_state["review_synced_state"] = corrected_df
 
-    # Show immediate feedback -- one clear toast per change, or a combined
-    # summary if several changed in the same interaction (e.g. a paste),
-    # so it never feels spammy.
-    if len(toast_messages) == 1:
-        st.toast(toast_messages[0])
-    elif len(toast_messages) > 1:
-        st.toast(f"\u2705 {len(toast_messages)} rows updated \u2014 see the list below for details")
+    # Upfront, explicit warning -- not just a note buried in a table cell.
+    if just_blocked_fields:
+        names = ", ".join(f"**{n}**" for n in just_blocked_fields)
+        st.warning(f"\u26a0\ufe0f No Target Object/Target API Name provided for {names} \u2014 "
+                  f"can't mark this Map/Direct until you fill those in. It's been kept flagged "
+                  f"for your decision until then.")
 
     # If anything was actually corrected, explicitly clear the widget's OWN
-    # internal memory (its 'review_editor' key) -- forces the NEXT render
-    # to treat corrected_df as fully authoritative, with no risk of stale
-    # internal edit-tracking silently fighting the correction.
+    # internal memory (its 'review_editor' key) AND force an immediate
+    # rerun -- without this, the corrected Status doesn't visibly show up
+    # until the person's NEXT unrelated click. Forcing the rerun here makes
+    # the correction appear immediately, in the same interaction.
     if correction_happened:
         st.session_state.pop("review_editor", None)
+        st.rerun()
 
     # --- Live, per-run counts, reflecting the CURRENT edited state --------
-    red_count = (corrected_df["\u26a0"] == "\U0001F534").sum()
+    # 5 distinct counts now, matching the 5 flag colors -- Decision Needed,
+    # Retire, and Rebuild are genuinely different situations and shouldn't
+    # be shown as one lumped "red" number.
+    decision_needed_count = (corrected_df["\u26a0"] == "\U0001F534").sum()
+    retire_count = (corrected_df["\u26a0"] == "\U0001F7E0").sum()
+    rebuild_count = (corrected_df["\u26a0"] == "\U0001F7E3").sum()
     yellow_count = (corrected_df["\u26a0"] == "\U0001F7E1").sum()
     green_count = (corrected_df["\u26a0"] == "\u2705").sum()
     st.markdown(f"""
 <div style="background-color:#F0F4FA; border:1px solid #005CD9; border-radius:6px;
             padding:10px 18px; color:#001E96; margin-bottom:12px;">
 \u2705 <b>{green_count} will be built automatically</b> \u2014 nothing to do.
-\U0001F7E1 <b>{yellow_count} need a quick confirmation</b> \u2014 tick the Confirmed box to accept as-is.
-\U0001F534 <b>{red_count} need your decision.</b>
+\U0001F7E1 <b>{yellow_count} need a quick confirmation</b> \u2014 change Status to auto_generate to accept.
+\U0001F534 <b>{decision_needed_count} genuinely need a decision</b> \u2014 unclear what they should become.
+\U0001F7E0 <b>{retire_count} already decided as Retire</b> \u2014 just needs your sign-off to drop.
+\U0001F7E3 <b>{rebuild_count} already decided as Rebuild</b> \u2014 needs custom development, not a decision.
 <span style="color:#005CD9;">(Updates live as you edit above. See the User Guide for what each term means.)</span>
 </div>
 """, unsafe_allow_html=True)
