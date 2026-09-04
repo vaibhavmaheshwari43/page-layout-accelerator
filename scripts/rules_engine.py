@@ -410,8 +410,12 @@ def classify_elements(raw_elements, registry_index, source_object=None, specific
                 # the right context (e.g. confirms this is the
                 # Address_vod__c-specific answer for a field, not an
                 # accidental cross-object mixup from a same-named field
-                # on a different object).
-                "veeva_object": reg_entry.get("veeva_object"),
+                # on a different object). Falls back to source_object (the
+                # object this classify_elements call is actually for) when
+                # the matched registry entry never tracked it explicitly --
+                # honest, not a guess: we structurally know the object
+                # regardless of whether the registry entry recorded it.
+                "veeva_object": reg_entry.get("veeva_object") or source_object,
             })
         else:
             canon, basis = structural_default_classification(el)

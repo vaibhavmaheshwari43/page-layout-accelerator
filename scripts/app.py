@@ -429,6 +429,14 @@ if run_clicked:
         st.session_state.org_verification_summary = org_verification_summary
         st.session_state.approved_df = None
         st.session_state.generated = None
+        # Fresh extraction means any prior review-table state is stale --
+        # clear BOTH our own tracking variable AND the data_editor widget's
+        # OWN internal memory (its 'review_editor' key). Clearing only the
+        # first isn't reliable: the widget keeps its own separate edit
+        # history tied to its key, and swapping the underlying data alone
+        # doesn't guarantee that old memory gets discarded.
+        st.session_state.pop("review_synced_state", None)
+        st.session_state.pop("review_editor", None)
 
         os.unlink(xml_path)
         os.unlink(registry_path)
@@ -549,6 +557,14 @@ if st.session_state.classified:
         action_code = e.get("action", "-")
         target_field = e.get("target", {}).get("api_name")
         target_obj = e.get("target", {}).get("object")
+
+        # Real safety check: a row should NEVER show as auto-buildable
+        # (green) if it has no real target -- can happen after a reviewer
+        # changes Classification to Map/Direct without also providing a
+        # target. Building against a blank target would be wrong.
+        if action_code == "auto_generate" and not (target_field and target_obj):
+            action_code = "flag_decision_needed"
+
         if action_code == "auto_generate" and target_field:
             recommended = f"Build automatically \u2192 {target_field}" + (f" on {target_obj}" if target_obj else "")
         elif action_code == "flag_manual_review":
@@ -561,6 +577,8 @@ if st.session_state.classified:
                 recommended = "\u26a0\ufe0f SUSPICIOUS RETIRE: this field is Required in Veeva \u2014 " + recommended
         elif action_code == "flag_decision_needed":
             recommended = "Needs a human decision before proceeding"
+            if e.get("classification", {}).get("canonical") in ("Map", "Direct") and not (target_field and target_obj):
+                recommended = "\u26a0\ufe0f Marked Map/Direct but has NO target yet \u2014 fill in Target Object + Target API Name before this can build"
         elif action_code == "flag_no_registry_entry":
             recommended = "No mapping known yet \u2014 needs one added to the registry"
         else:
@@ -576,45 +594,35 @@ if st.session_state.classified:
         rows.append({
             "idx": i,
             "\u26a0": flag,
+            "Confirmed": False,
+            "Classification": e.get("classification", {}).get("canonical", "-"),
             "Section": e["layout_section"],
             "Type": e["element_type"],
-            "Veeva API Name": e["api_name"],
             "Veeva Object": e.get("veeva_object") or "-",
             "Veeva Label": e.get("veeva_label") or "-",
-            "Recommended Action": recommended,
-            "Basis": e.get("basis", "-"),
+            "Veeva API Name": e["api_name"],
             "Datatype": e.get("veeva_datatype") or "-",
-            "Behavior": e.get("behavior", "-"),
-            "Classification": e.get("classification", {}).get("canonical", "-"),
             "Target Object": target_obj or "-",
-            "Target Field API Name": target_field or "-",
+            # Target Label: we genuinely don't have this data anywhere in
+            # the system today -- our registry only tracks the target's
+            # API name and object, not a human-readable label for it.
+            "Target Label": "-",
+            "Target API Name": target_field or "-",
+            "Basis": e.get("basis", "-"),
+            "Recommended Action": recommended,
+            "Status (system)": action_code,
+            "Reviewer Comment": "",
+            # Trailing extras not in the requested order, kept rather than
+            # silently dropped.
+            "Behavior": e.get("behavior", "-"),
             "Confidence": e.get("target", {}).get("confidence", "-"),
             "Org Verified": "\u2713" if e.get("org_verified") else ("\u2717" if "org_verified" in e else "-"),
             "Candidates (from org)": candidates_str,
-            "Status (system)": action_code,
-            "Reviewer Comment": "",
         })
     df = pd.DataFrame(rows)
     flag_priority = {"\U0001F534": 0, "\U0001F7E1": 1, "\u2705": 2}
     df["_sort_priority"] = df["\u26a0"].map(flag_priority)
     df = df.sort_values("_sort_priority", kind="stable").drop(columns=["_sort_priority"]).reset_index(drop=True)
-
-    # Slimmed down per request: only the LIVE, per-run counts stay inline
-    # here -- the static definitions of what each term means now live in
-    # the User Guide popover (see top of page) instead of repeating a wall
-    # of text every time this table renders.
-    red_count = (df["\u26a0"] == "\U0001F534").sum()
-    yellow_count = (df["\u26a0"] == "\U0001F7E1").sum()
-    green_count = (df["\u26a0"] == "\u2705").sum()
-    st.markdown(f"""
-<div style="background-color:#F0F4FA; border:1px solid #005CD9; border-radius:6px;
-            padding:10px 18px; color:#001E96; margin-bottom:12px;">
-\u2705 <b>{green_count} will be built automatically</b> \u2014 nothing to do.
-\U0001F7E1 <b>{yellow_count} need a quick confirmation.</b>
-\U0001F534 <b>{red_count} need your decision</b> \u2014 sorted to the top.
-<span style="color:#005CD9;">(See the User Guide above for what each term means.)</span>
-</div>
-""", unsafe_allow_html=True)
 
     action_options = ["auto_generate", "flag_manual_review", "flag_rebuild",
                        "flag_retire", "flag_decision_needed", "flag_no_registry_entry",
@@ -661,11 +669,62 @@ if st.session_state.classified:
     #         st.info("No rows matched \u2014 either nothing is at 'flag_manual_review', or none meet "
     #                "the selected confidence threshold.")
 
-    edited_df = st.data_editor(
-        df,
+    CLASSIFICATION_OPTIONS = ["Direct", "Map", "Rebuild", "Retire", "Decision Needed"]
+    CLASSIFICATION_TO_STATUS = {
+        "Direct": "auto_generate", "Map": "auto_generate",
+        "Rebuild": "flag_rebuild", "Retire": "flag_retire",
+        "Decision Needed": "flag_decision_needed",
+    }
+    STATUS_TO_CLASSIFICATION = {
+        "auto_generate": "Map", "flag_manual_review": "Map",
+        "flag_rebuild": "Rebuild", "flag_retire": "Retire",
+        "flag_decision_needed": "Decision Needed", "flag_no_registry_entry": "Decision Needed",
+        "informational_only": "-",
+    }
+
+    def _flag_for_status(status):
+        if status == "auto_generate":
+            return "\u2705"
+        elif status == "flag_manual_review":
+            return "\U0001F7E1"
+        else:
+            return "\U0001F534"
+
+    # If a previous edit already produced a synced/corrected state, show
+    # THAT (not the freshly-rebuilt proposal) -- so corrections from the
+    # last interaction are visible in the table.
+    display_df = st.session_state.get("review_synced_state")
+    if display_df is None or len(display_df) != len(df):
+        display_df = df
+
+    # --- Filter by category -- display-only, never loses rows -------------
+    FILTER_OPTIONS = {
+        "\U0001F534 Needs your decision": "\U0001F534",
+        "\U0001F7E1 Needs quick confirmation": "\U0001F7E1",
+        "\u2705 Will auto-build": "\u2705",
+    }
+    selected_filters = st.multiselect(
+        "Filter by status",
+        options=list(FILTER_OPTIONS.keys()),
+        default=list(FILTER_OPTIONS.keys()),
+    )
+    selected_flags = {FILTER_OPTIONS[f] for f in selected_filters}
+    if selected_flags:
+        filtered_display_df = display_df[display_df["\u26a0"].isin(selected_flags)].reset_index(drop=True)
+    else:
+        filtered_display_df = display_df.iloc[0:0]
+
+    edited_visible_df = st.data_editor(
+        filtered_display_df,
         column_config={
             "idx": None,  # hide internal index
+            "Classification": st.column_config.SelectboxColumn(options=CLASSIFICATION_OPTIONS),
             "Status (system)": st.column_config.SelectboxColumn(options=action_options),
+            "Confirmed": st.column_config.CheckboxColumn(
+                help="For 'quick confirmation' rows: tick this to confirm the proposed "
+                     "mapping is correct as-is. Re-selecting the same Classification value "
+                     "doesn't register as an edit, so this checkbox exists specifically for "
+                     "confirming without changing anything."),
             "Recommended Action": st.column_config.TextColumn(width=280),
             "Basis": st.column_config.TextColumn(width=420),
             "Reviewer Comment": st.column_config.TextColumn(width="medium"),
@@ -675,9 +734,134 @@ if st.session_state.classified:
         key="review_editor",
     )
 
-    approve_clicked = st.button("\u2705 Approve reviewed decisions", type="primary")
+    # --- Sync: Classification <-> Status, plus the Confirmed checkbox -----
+    # Diff against the LAST synced state (or the original proposal, on the
+    # very first render) to figure out what actually changed this time.
+    prev_state = st.session_state.get("review_synced_state")
+    if prev_state is None or len(prev_state) != len(display_df):
+        prev_state = df
+    prev_by_idx = {row["idx"]: row for _, row in prev_state.iterrows()}
+
+    correction_happened = False
+    corrected_rows = []
+    toast_messages = []  # UX polish only -- immediate feedback per change, doesn't touch sync logic itself
+    visible_idx_set = set(edited_visible_df["idx"]) if len(edited_visible_df) else set()
+    for _, row in edited_visible_df.iterrows():
+        row = row.copy()
+        prev_row = prev_by_idx.get(row["idx"])
+        classification_changed = prev_row is not None and row["Classification"] != prev_row["Classification"]
+        status_changed = prev_row is not None and row["Status (system)"] != prev_row["Status (system)"]
+        confirmed_just_ticked = (prev_row is not None and not prev_row.get("Confirmed", False)
+                                  and row.get("Confirmed", False))
+        row_changed_this_render = False
+
+        if classification_changed:
+            new_status = CLASSIFICATION_TO_STATUS.get(row["Classification"])
+            if new_status:
+                row["Status (system)"] = new_status
+                correction_happened = True
+                row_changed_this_render = True
+        elif confirmed_just_ticked and prev_row["Status (system)"] == "flag_manual_review":
+            # Explicit confirmation for a "quick confirmation" row -- this
+            # is the mechanism for "Map to Map" style confirmations that a
+            # dropdown re-selection can never reliably detect as an edit.
+            row["Status (system)"] = "auto_generate"
+            correction_happened = True
+            row_changed_this_render = True
+        elif status_changed:
+            new_classification = STATUS_TO_CLASSIFICATION.get(row["Status (system)"])
+            if new_classification:
+                row["Classification"] = new_classification
+                correction_happened = True
+                row_changed_this_render = True
+
+        # Safety re-check: never let a row settle as auto-buildable with a
+        # blank target -- force it back to needing a decision instead.
+        blocked_by_blank_target = False
+        if row["Status (system)"] == "auto_generate" and (row["Target Object"] == "-" or row["Target API Name"] == "-"):
+            row["Status (system)"] = "flag_decision_needed"
+            row["Recommended Action"] = ("\u26a0\ufe0f Marked Map/Direct but has NO target yet \u2014 "
+                                         "fill in Target Object + Target API Name before this can build")
+            correction_happened = True
+            row_changed_this_render = True
+            blocked_by_blank_target = True
+
+        # Immediate feedback, based on the FINAL state after all checks --
+        # pure UX polish, doesn't change what actually happened, just makes
+        # it clearly visible the moment it happens instead of only showing
+        # up silently in the counts/change-summary further down.
+        if row_changed_this_render:
+            field_label = row["Veeva API Name"]
+            if blocked_by_blank_target:
+                toast_messages.append(f"\u270f\ufe0f **{field_label}**: almost there \u2014 add a Target Object "
+                                      f"+ Target API Name to finish this mapping")
+            elif row["Status (system)"] == "auto_generate":
+                toast_messages.append(f"\u2705 **{field_label}**: will build automatically")
+            elif row["Status (system)"] == "flag_retire":
+                toast_messages.append(f"\U0001F534 **{field_label}**: marked for removal \u2014 flagged for sign-off")
+            elif row["Status (system)"] == "flag_rebuild":
+                toast_messages.append(f"\U0001F534 **{field_label}**: marked for a custom rebuild")
+            elif row["Status (system)"] == "flag_decision_needed":
+                toast_messages.append(f"\U0001F534 **{field_label}**: flagged for your decision")
+
+        row["\u26a0"] = _flag_for_status(row["Status (system)"])
+        corrected_rows.append(row)
+
+    # Carry forward every row that wasn't visible this render, unchanged --
+    # otherwise filtering would silently drop them from the tracked state.
+    for _, row in prev_state.iterrows():
+        if row["idx"] not in visible_idx_set:
+            corrected_rows.append(row.copy())
+
+    corrected_df = pd.DataFrame(corrected_rows).sort_values("idx").reset_index(drop=True)
+    st.session_state["review_synced_state"] = corrected_df
+
+    # Show immediate feedback -- one clear toast per change, or a combined
+    # summary if several changed in the same interaction (e.g. a paste),
+    # so it never feels spammy.
+    if len(toast_messages) == 1:
+        st.toast(toast_messages[0])
+    elif len(toast_messages) > 1:
+        st.toast(f"\u2705 {len(toast_messages)} rows updated \u2014 see the list below for details")
+
+    # If anything was actually corrected, explicitly clear the widget's OWN
+    # internal memory (its 'review_editor' key) -- forces the NEXT render
+    # to treat corrected_df as fully authoritative, with no risk of stale
+    # internal edit-tracking silently fighting the correction.
+    if correction_happened:
+        st.session_state.pop("review_editor", None)
+
+    # --- Live, per-run counts, reflecting the CURRENT edited state --------
+    red_count = (corrected_df["\u26a0"] == "\U0001F534").sum()
+    yellow_count = (corrected_df["\u26a0"] == "\U0001F7E1").sum()
+    green_count = (corrected_df["\u26a0"] == "\u2705").sum()
+    st.markdown(f"""
+<div style="background-color:#F0F4FA; border:1px solid #005CD9; border-radius:6px;
+            padding:10px 18px; color:#001E96; margin-bottom:12px;">
+\u2705 <b>{green_count} will be built automatically</b> \u2014 nothing to do.
+\U0001F7E1 <b>{yellow_count} need a quick confirmation</b> \u2014 tick the Confirmed box to accept as-is.
+\U0001F534 <b>{red_count} need your decision.</b>
+<span style="color:#005CD9;">(Updates live as you edit above. See the User Guide for what each term means.)</span>
+</div>
+""", unsafe_allow_html=True)
+
+    # --- Change summary -----------------------------------------------------
+    changes = []
+    orig_by_idx = {row["idx"]: row for _, row in df.iterrows()}
+    for _, row in corrected_df.iterrows():
+        orig_row = orig_by_idx.get(row["idx"])
+        if orig_row is not None and row["Classification"] != orig_row["Classification"]:
+            changes.append(f"**{row['Veeva API Name']}**: {orig_row['Classification']} \u2192 {row['Classification']}")
+    if changes:
+        st.markdown(f"**You've changed {len(changes)} row(s):**")
+        for c in changes[:15]:
+            st.markdown(f"- {c}")
+        if len(changes) > 15:
+            st.caption(f"...and {len(changes) - 15} more.")
+
+    approve_clicked = st.button("\u2705 Approve decisions", type="primary")
     if approve_clicked:
-        st.session_state.approved_df = edited_df
+        st.session_state.approved_df = corrected_df
         st.session_state.generated = None
         st.success("Decisions approved. Scroll down to generate.")
 
@@ -701,7 +885,7 @@ if st.session_state.approved_df is not None:
         e2 = dict(e)
         e2["action"] = row["Status (system)"]
         e2["target"] = {**e.get("target", {}),
-                        "api_name": row["Target Field API Name"] if row["Target Field API Name"] != "-" else None,
+                        "api_name": row["Target API Name"] if row["Target API Name"] != "-" else None,
                         "object": row["Target Object"] if row["Target Object"] != "-" else e.get("target", {}).get("object")}
         e2["reviewer_comment"] = row["Reviewer Comment"]
         reviewed_elements.append(e2)
