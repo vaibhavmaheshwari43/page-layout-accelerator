@@ -946,7 +946,7 @@ if st.session_state.generated:
     gen = st.session_state.generated
     st.success("Generated successfully.")
 
-    tab1, tab2, tab3, tab4 = st.tabs(["Before / After Preview", "Page Layout XML", "Flexipage XML", "Build Report (not built)"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Before / After Preview", "Page Layout XML", "Flexipage XML", "Build Report"])
     with tab1:
         before_order, before_sections = group_all_by_section_before(st.session_state.classified)
         after_order, after_sections = group_fields_by_section(gen["reviewed_elements"])
@@ -969,14 +969,21 @@ if st.session_state.generated:
                f"the items flagged for rebuild/retire/decision, listed in the Build Report tab, not silently dropped.")
 
     with tab2:
-        st.code(gen["layout_xml"], language="xml")
-        st.download_button("Download Layout XML", gen["layout_xml"],
-                            file_name=f"{object_name}-{layout_name}_Generated.layout-meta.xml")
+        _, dl_col = st.columns([4, 1])
+        with dl_col:
+            st.download_button("\u2b07\ufe0f Download", gen["layout_xml"],
+                                file_name=f"{object_name}-{layout_name}_Generated.layout-meta.xml")
+        st.code(gen["layout_xml"], language="xml", height=350)
     with tab3:
-        st.code(gen["flexipage_xml"], language="xml")
-        st.download_button("Download Flexipage XML", gen["flexipage_xml"],
-                            file_name=f"{object_name}_{layout_name}_Generated.flexipage-meta.xml")
+        _, dl_col = st.columns([4, 1])
+        with dl_col:
+            st.download_button("\u2b07\ufe0f Download", gen["flexipage_xml"],
+                                file_name=f"{object_name}_{layout_name}_Generated.flexipage-meta.xml")
+        st.code(gen["flexipage_xml"], language="xml", height=350)
     with tab4:
+        st.caption("Summary of everything flagged for rebuild/retire/decision during generation \u2014 "
+                   "these are the items NOT in the generated layout, listed here so nothing gets "
+                   "silently dropped without a record.")
         st.json(gen["report"])
 
     # -----------------------------------------------------------------
