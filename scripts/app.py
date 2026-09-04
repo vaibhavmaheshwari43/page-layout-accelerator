@@ -99,6 +99,11 @@ st.markdown(f"""
 
 st.title("Veeva \u2192 LSC Page Layout Accelerator")
 st.caption("Extract \u2192 Review & Approve \u2192 Generate \u2192 Validate \u2192 Deploy")
+# Version marker, kept clean and short on purpose (not a debug log) --
+# specifically so you can self-check you're on the right file in one
+# glance. To verify: findstr /C:"2026-09-03-A" scripts\app.py
+# (an empty result means you're on an OLDER file).
+st.caption("Build: 2026-09-03-A")
 
 # User Guide -- a single, consolidated place for anything that's
 # EXPLANATORY (concepts, terminology, how the workflow fits together)
@@ -563,17 +568,25 @@ if st.session_state.classified:
         # (green) if it has no real target -- can happen after a reviewer
         # changes Classification to Map/Direct without also providing a
         # target. Building against a blank target would be wrong.
-        if action_code == "auto_generate" and not (target_field and target_obj):
+        #
+        # Corrected scoping: previously excluded everything except "Field"
+        # and "Related List", which was too broad -- Custom Buttons, Custom
+        # Links, and similar CAN genuinely need a real target when marked
+        # Map/Direct (e.g. "Map" for a custom button needs to say what
+        # it's mapped to), so excluding them let real gaps through
+        # unchecked. Only "Section (empty in metadata)" is EXCLUDED here --
+        # the one type actually confirmed to have no target concept at all
+        # (it's a structural placeholder shell, api_name is literally "-",
+        # not a real mappable entity).
+        if (e["element_type"] != "Section (empty in metadata)"
+                and action_code == "auto_generate" and not (target_field and target_obj)):
             action_code = "flag_decision_needed"
 
         if action_code == "auto_generate" and target_field:
             recommended = f"Build automatically \u2192 {target_field}" + (f" on {target_obj}" if target_obj else "")
         elif action_code == "flag_manual_review":
-            # No more "Confirmed" checkbox -- confirming a quick-confirmation
-            # row now means directly changing Status (system) to
-            # auto_generate, which the sync correctly detects as a real edit.
             recommended = (f"Proposed: {target_field}" + (f" on {target_obj}" if target_obj else "")
-                          + " \u2014 change Status to auto_generate to confirm and build")
+                          + " \u2014 tick Confirmed to accept as-is, or change it if wrong")
         elif action_code == "flag_rebuild":
             recommended = "Needs a custom rebuild \u2014 no direct LSC equivalent"
         elif action_code == "flag_retire":
@@ -589,12 +602,10 @@ if st.session_state.classified:
         else:
             recommended = "-"
 
-        # 5 distinct flags, not 3 -- Decision Needed / Retire / Rebuild used
-        # to all show as the same red circle, which hid a real difference:
-        # Decision Needed is genuinely unclear, while Retire/Rebuild have
-        # ALREADY been decided and just need follow-through (sign-off, dev
-        # work), not a judgment call. Distinct colors make that visible at
-        # a glance instead of requiring a click into each row.
+        # 5 distinct flags -- Decision Needed / Retire / Rebuild used to
+        # all show the same red circle, hiding a real difference: Decision
+        # Needed is genuinely unclear, while Retire/Rebuild have ALREADY
+        # been decided and just need follow-through, not a judgment call.
         if action_code == "auto_generate":
             flag = "\u2705"
         elif action_code == "flag_manual_review":
@@ -604,7 +615,7 @@ if st.session_state.classified:
         elif action_code == "flag_rebuild":
             flag = "\U0001F7E3"  # purple -- already decided, needs dev work
         else:
-            flag = "\U0001F534"  # red -- genuinely undecided (flag_decision_needed, flag_no_registry_entry)
+            flag = "\U0001F534"  # red -- genuinely undecided
 
         rows.append({
             "idx": i,
@@ -625,13 +636,17 @@ if st.session_state.classified:
             "Basis": e.get("basis", "-"),
             "Recommended Action": recommended,
             "Status (system)": action_code,
+            "Confirmed": False,
             "Reviewer Comment": "",
-            # Trailing extras not in the requested order, kept rather than
-            # silently dropped.
+            # "Behavior" kept -- comes from the real Veeva layout XML
+            # directly, always populated, and actively used by the
+            # suspicious-retire check above. "Org Verified" and "Candidates
+            # (from org)" removed -- both only populate via the
+            # org-verification feature, which needs a describe JSON upload
+            # that's currently disabled, so both would always show "-"
+            # right now -- dead weight, not a judgment call on their value.
             "Behavior": e.get("behavior", "-"),
             "Confidence": e.get("target", {}).get("confidence", "-"),
-            "Org Verified": "\u2713" if e.get("org_verified") else ("\u2717" if "org_verified" in e else "-"),
-            "Candidates (from org)": candidates_str,
         })
     df = pd.DataFrame(rows)
     flag_priority = {"\U0001F534": 0, "\U0001F7E0": 1, "\U0001F7E3": 1, "\U0001F7E1": 2, "\u2705": 3}
@@ -711,14 +726,18 @@ if st.session_state.classified:
     # If a previous edit already produced a synced/corrected state, show
     # THAT (not the freshly-rebuilt proposal) -- so corrections from the
     # last interaction are visible in the table.
+    #
+    # IMPORTANT: staleness is checked by comparing the actual set of field
+    # identities, NOT just row count. Two different layouts could
+    # coincidentally have the same number of rows -- a pure length check
+    # would then wrongly treat old, unrelated data as belonging to the new
+    # layout, producing spurious warnings/blocked rows on a fresh load.
+    current_fingerprint = frozenset(zip(df["idx"], df["Veeva API Name"]))
     display_df = st.session_state.get("review_synced_state")
-    if display_df is None or len(display_df) != len(df):
+    if display_df is None or frozenset(zip(display_df["idx"], display_df["Veeva API Name"])) != current_fingerprint:
         display_df = df
 
     # --- Filter by category -- display-only, never loses rows -------------
-    # 5 options now, matching the 5 distinct flag colors -- Decision Needed,
-    # Retire, and Rebuild used to be lumped as one "red" filter option,
-    # which hid the same real distinction the colors now show.
     FILTER_OPTIONS = {
         "\U0001F534 Decision Needed": "\U0001F534",
         "\U0001F7E0 Retire": "\U0001F7E0",
@@ -743,6 +762,13 @@ if st.session_state.classified:
             "idx": None,  # hide internal index
             "Classification": st.column_config.SelectboxColumn(options=CLASSIFICATION_OPTIONS),
             "Status (system)": st.column_config.SelectboxColumn(options=action_options),
+            "Confirmed": st.column_config.CheckboxColumn(
+                help="For 'quick confirmation' rows: tick this to confirm the proposed "
+                     "mapping is correct as-is. Re-selecting the same Classification value "
+                     "doesn't register as an edit (a genuine Streamlit limitation, not a bug) "
+                     "-- this checkbox is the actual working way to confirm without changing "
+                     "anything else. Has no effect on rows that aren't currently at "
+                     "'quick confirmation'."),
             "Recommended Action": st.column_config.TextColumn(width=280),
             "Basis": st.column_config.TextColumn(width=420),
             "Reviewer Comment": st.column_config.TextColumn(width="medium"),
@@ -752,34 +778,32 @@ if st.session_state.classified:
         key="review_editor",
     )
 
-    # --- Sync: Classification <-> Status ------------------------------------
-    # Diff against the LAST synced state (or the original proposal, on the
-    # very first render) to figure out what actually changed this time.
-    # No more "Confirmed" checkbox -- now that Decision Needed/Retire/Rebuild
-    # are visually distinct, confirming a quick-confirmation (yellow) row is
-    # done by directly changing Status to auto_generate, which the sync
-    # correctly detects as a real edit (unlike re-selecting the same
-    # Classification value, which never registers as a change).
+    # --- Sync: Classification <-> Status, plus the Confirmed checkbox -----
     prev_state = st.session_state.get("review_synced_state")
-    if prev_state is None or len(prev_state) != len(display_df):
+    if prev_state is None or frozenset(zip(prev_state["idx"], prev_state["Veeva API Name"])) != current_fingerprint:
         prev_state = df
     prev_by_idx = {row["idx"]: row for _, row in prev_state.iterrows()}
 
     correction_happened = False
     corrected_rows = []
-    just_blocked_fields = []  # rows that JUST got blocked this render -- for the upfront warning
+    just_blocked_fields = []
     visible_idx_set = set(edited_visible_df["idx"]) if len(edited_visible_df) else set()
     for _, row in edited_visible_df.iterrows():
         row = row.copy()
         prev_row = prev_by_idx.get(row["idx"])
         classification_changed = prev_row is not None and row["Classification"] != prev_row["Classification"]
         status_changed = prev_row is not None and row["Status (system)"] != prev_row["Status (system)"]
+        confirmed_just_ticked = (prev_row is not None and not prev_row.get("Confirmed", False)
+                                  and row.get("Confirmed", False))
 
         if classification_changed:
             new_status = CLASSIFICATION_TO_STATUS.get(row["Classification"])
             if new_status:
                 row["Status (system)"] = new_status
                 correction_happened = True
+        elif confirmed_just_ticked and prev_row["Status (system)"] == "flag_manual_review":
+            row["Status (system)"] = "auto_generate"
+            correction_happened = True
         elif status_changed:
             new_classification = STATUS_TO_CLASSIFICATION.get(row["Status (system)"])
             if new_classification:
@@ -787,21 +811,42 @@ if st.session_state.classified:
                 correction_happened = True
 
         # Safety re-check: never let a row settle as auto-buildable with a
-        # blank target -- force it back to needing a decision instead.
-        if row["Status (system)"] == "auto_generate" and (row["Target Object"] == "-" or row["Target API Name"] == "-"):
-            was_already_blocked = prev_row is not None and prev_row["Status (system)"] == "flag_decision_needed"
-            row["Status (system)"] = "flag_decision_needed"
-            row["Recommended Action"] = ("\u26a0\ufe0f Marked Map/Direct but has NO target yet \u2014 "
-                                         "fill in Target Object + Target API Name before this can build")
-            correction_happened = True
-            if not was_already_blocked:
+        # blank target. Corrected scoping: only "Section (empty in
+        # metadata)" is excluded -- a genuine structural placeholder with
+        # no target concept at all. Custom Buttons/Links and other types DO
+        # need a real target when marked Map/Direct.
+        #
+        # Real bug found and fixed here: previously used
+        # prev_row["Status (system)"] == "flag_decision_needed" as a proxy
+        # for "was this already blocked by this exact check before" -- but
+        # that's also true for a row that simply STARTED at Decision Needed
+        # from the original proposal, which is a completely different
+        # situation. That ambiguity meant Classification never got reverted
+        # and the warning never fired for the very common case of promoting
+        # an originally-undecided row straight to Map/Direct with no
+        # target. Using classification_changed instead is precise: it's
+        # already computed above, directly answers "did a genuinely new
+        # attempt happen THIS render," and isn't confused by what the
+        # Status value happened to already be.
+        if (row["Type"] != "Section (empty in metadata)" and row["Status (system)"] == "auto_generate"
+                and (row["Target Object"] == "-" or row["Target API Name"] == "-")):
+            if classification_changed and prev_row is not None:
+                row["Classification"] = prev_row["Classification"]
+                row["Status (system)"] = prev_row["Status (system)"]
+                row["Recommended Action"] = ("\u26a0\ufe0f Can't switch to Map/Direct without a Target Object "
+                                             "+ Target API Name \u2014 fill those in first, then change "
+                                             "Classification again. Kept as it was for now.")
                 just_blocked_fields.append(row["Veeva API Name"])
+            else:
+                row["Status (system)"] = "flag_decision_needed"
+                row["Recommended Action"] = ("\u26a0\ufe0f Marked Map/Direct but has NO target yet \u2014 "
+                                             "fill in Target Object + Target API Name before this can build")
+            correction_happened = True
 
         row["\u26a0"] = _flag_for_status(row["Status (system)"])
         corrected_rows.append(row)
 
-    # Carry forward every row that wasn't visible this render, unchanged --
-    # otherwise filtering would silently drop them from the tracked state.
+    # Carry forward every row that wasn't visible this render, unchanged.
     for _, row in prev_state.iterrows():
         if row["idx"] not in visible_idx_set:
             corrected_rows.append(row.copy())
@@ -809,26 +854,19 @@ if st.session_state.classified:
     corrected_df = pd.DataFrame(corrected_rows).sort_values("idx").reset_index(drop=True)
     st.session_state["review_synced_state"] = corrected_df
 
-    # Upfront, explicit warning -- not just a note buried in a table cell.
     if just_blocked_fields:
         names = ", ".join(f"**{n}**" for n in just_blocked_fields)
         st.warning(f"\u26a0\ufe0f No Target Object/Target API Name provided for {names} \u2014 "
-                  f"can't mark this Map/Direct until you fill those in. It's been kept flagged "
-                  f"for your decision until then.")
+                  f"kept as it was until you fill those in, then you can change Classification again.")
 
     # If anything was actually corrected, explicitly clear the widget's OWN
-    # internal memory (its 'review_editor' key) AND force an immediate
-    # rerun -- without this, the corrected Status doesn't visibly show up
-    # until the person's NEXT unrelated click. Forcing the rerun here makes
-    # the correction appear immediately, in the same interaction.
+    # internal memory AND force an immediate rerun -- without this, the
+    # corrected value doesn't visibly show up until the next unrelated click.
     if correction_happened:
         st.session_state.pop("review_editor", None)
         st.rerun()
 
     # --- Live, per-run counts, reflecting the CURRENT edited state --------
-    # 5 distinct counts now, matching the 5 flag colors -- Decision Needed,
-    # Retire, and Rebuild are genuinely different situations and shouldn't
-    # be shown as one lumped "red" number.
     decision_needed_count = (corrected_df["\u26a0"] == "\U0001F534").sum()
     retire_count = (corrected_df["\u26a0"] == "\U0001F7E0").sum()
     rebuild_count = (corrected_df["\u26a0"] == "\U0001F7E3").sum()
@@ -838,7 +876,7 @@ if st.session_state.classified:
 <div style="background-color:#F0F4FA; border:1px solid #005CD9; border-radius:6px;
             padding:10px 18px; color:#001E96; margin-bottom:12px;">
 \u2705 <b>{green_count} will be built automatically</b> \u2014 nothing to do.
-\U0001F7E1 <b>{yellow_count} need a quick confirmation</b> \u2014 change Status to auto_generate to accept.
+\U0001F7E1 <b>{yellow_count} need a quick confirmation</b> \u2014 tick the Confirmed box to accept as-is.
 \U0001F534 <b>{decision_needed_count} genuinely need a decision</b> \u2014 unclear what they should become.
 \U0001F7E0 <b>{retire_count} already decided as Retire</b> \u2014 just needs your sign-off to drop.
 \U0001F7E3 <b>{rebuild_count} already decided as Rebuild</b> \u2014 needs custom development, not a decision.
