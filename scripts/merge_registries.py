@@ -18,6 +18,21 @@ silently dropped. Now also checks veeva_object: a new entry is only
 skipped as "already covered" if the SAME (type, api_name, object)
 combination already exists -- otherwise it's added as a genuinely
 different, additional entry.
+
+SECOND IMPORTANT FIX: the previous version treated "already exists" as the
+end of the story for object-specific entries, with no way to detect that
+the mapping team's own file had been genuinely UPDATED since the last
+conversion. Confirmed a real case: Address_vod__c's 'Name' field was
+REFERENCE/Retire in an earlier file, then corrected to MAPPED/Map -> 
+Address.Street in a newer one -- a legitimate correction that was being
+silently discarded. Now: for NON-ACCOUNT object-specific entries (where we
+have no independently-proven data of our own, only what the mapping team's
+file says), if the new file's answer for the SAME field genuinely differs
+from what's on record, it's treated as an update and replaces the old
+entry. Account entries are NOT subject to this -- that trust-hierarchy
+protection stays absolute and unconditional, since our Account data is
+independently proven via real deployment testing, not just the mapping
+team's latest opinion.
 """
 import json
 import sys
@@ -35,19 +50,17 @@ def main():
         (e["element_type"], e["api_name"], e["veeva_object"])
         for e in existing["entries"] if e.get("veeva_object")
     }
+    # Index by specific key for quick lookup/replacement during the update check.
+    entry_by_specific_key = {
+        (e["element_type"], e["api_name"], e["veeva_object"]): e
+        for e in existing["entries"] if e.get("veeva_object")
+    }
 
     added = 0
     added_as_object_specific = 0
+    updated = 0
     skipped_would_override_proven = 0
-    # Our original 71 entries were ALL built exclusively in the Account/HCO
-    # context -- so any new entry claiming veeva_object == 'Account' would
-    # be competing with already-proven, hand-vetted data. Confirmed a real
-    # case: a DIFFERENT Account layout ('Board') judged 'Name' as REFERENCE
-    # (Retire), which would have silently overridden our correct, proven
-    # HCO answer (Direct, High confidence) for the exact same field. Only
-    # add object-specific entries for objects our original set never
-    # covered at all -- that's genuinely new information, not a competing
-    # opinion on something already verified.
+    skipped_unchanged = 0
     ORIGINAL_SET_IMPLICIT_OBJECT = "Account"
 
     merged_entries = list(existing["entries"])
@@ -58,7 +71,22 @@ def main():
         if veeva_object:
             specific_key = (e["element_type"], e["api_name"], veeva_object)
             if specific_key in existing_specific_keys:
-                continue  # this exact object-specific entry already exists
+                if veeva_object == ORIGINAL_SET_IMPLICIT_OBJECT:
+                    # Account: NEVER update, even if the new file disagrees --
+                    # this protection stays unconditional, since our Account
+                    # data is independently proven, not just the mapping
+                    # team's latest opinion.
+                    continue
+                old_entry = entry_by_specific_key[specific_key]
+                content_differs = (old_entry["classification"]["canonical"] != e["classification"]["canonical"]
+                                   or old_entry["target"] != e["target"])
+                if content_differs:
+                    merged_entries.remove(old_entry)
+                    merged_entries.append(e)
+                    updated += 1
+                else:
+                    skipped_unchanged += 1
+                continue
             if generic_key in existing_keys and veeva_object == ORIGINAL_SET_IMPLICIT_OBJECT:
                 # Would compete with already-proven data for the same
                 # object -- trust the proven entry, skip this one.
@@ -81,6 +109,8 @@ def main():
     print(f"Existing entries: {len(existing['entries'])}")
     print(f"New entries added (not previously covered): {added}")
     print(f"  Of which added as object-specific variants alongside an existing generic entry: {added_as_object_specific}")
+    print(f"Updated (mapping team corrected a non-Account entry since the last conversion): {updated}")
+    print(f"Skipped, unchanged (identical to what's already on file): {skipped_unchanged}")
     print(f"Skipped (would have overridden already-proven Account/HCO data): {skipped_would_override_proven}")
     print(f"Total merged: {len(merged_entries)}")
 

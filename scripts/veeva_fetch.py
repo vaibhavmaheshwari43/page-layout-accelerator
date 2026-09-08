@@ -265,27 +265,59 @@ def search_layouts_by_name(sf_exe, layout_name, org_alias, sfdx_root):
 
 
 def list_layout_names_for_object(sf_exe, object_name, org_alias, sfdx_root):
-    """Returns a clean, sorted list of bare layout names (no object prefix)
-    for a given object -- the actual data source for a dropdown/checklist,
-    so a person can pick a real layout instead of typing/guessing its exact
-    name. Reuses list_layouts_scoped (already proven correct) and just
+    """Returns (names, error_detail) -- a clean, sorted list of bare layout
+    names (no object prefix) for a given object, the actual data source for
+    a dropdown/checklist, so a person can pick a real layout instead of
+    typing/guessing its exact name. Reuses list_layouts_scoped and just
     strips the object prefix, since the object is already known/fixed by
-    what was typed -- showing 'SP_Admin_Layout_HCO' instead of
-    'Account-SP_Admin_Layout_HCO' is cleaner for a dropdown.
+    what was typed.
 
-    Returns None if the query fails for any reason (so the caller can show
-    a clear error instead of an empty, misleading dropdown), or an empty
-    list if the query succeeded but genuinely found nothing.
+    Returns (None, error_detail) if the query genuinely failed -- error_detail
+    is the REAL underlying reason, not swallowed, so the caller can show it
+    instead of a generic "not found" that hides what actually went wrong.
+    Returns ([], None) if the query succeeded but genuinely found nothing.
     """
-    layouts = list_layouts_scoped(sf_exe, object_name, org_alias, sfdx_root)
+    layouts, error_detail = list_layouts_scoped(sf_exe, object_name, org_alias, sfdx_root)
     if layouts is None:
-        return None
+        return None, error_detail
     bare_names = sorted({
         full_name.partition("-")[2]
         for layout in layouts
         if (full_name := layout.get("fullName")) and "-" in full_name
     })
-    return bare_names
+    return bare_names, None
+
+
+def resolve_object_name_to_durable_id(sf_exe, object_name, org_alias, sfdx_root):
+    """The reverse of resolve_table_enum_ids: given a real object API name
+    (e.g. 'Address_vod__c'), finds its DurableId -- the raw internal
+    identifier that TableEnumOrId actually stores for CUSTOM objects.
+    Needed because filtering Layout by 'WHERE TableEnumOrId = <object name>'
+    only works for STANDARD objects (where TableEnumOrId genuinely stores
+    the readable name) -- for custom objects it stores the raw Id instead,
+    so a name-based filter silently matches zero rows, not because there
+    are no layouts, but because we're filtering by the wrong
+    representation entirely. Confirmed this exact failure mode for
+    Address_vod__c: the query ran successfully and correctly found zero
+    matches, because 'Address_vod__c' was never going to equal the raw Id
+    actually stored.
+
+    Returns None if not found or the query fails -- caller should still
+    fall back to trying the literal object name (covers standard objects).
+    """
+    query = f"SELECT DurableId FROM EntityDefinition WHERE QualifiedApiName = '{object_name}'"
+    cmd = [sf_exe, "data", "query", "--use-tooling-api",
+           "--query", query, "--target-org", org_alias, "--json"]
+    try:
+        result = subprocess.run(cmd, cwd=sfdx_root, capture_output=True, text=True,
+                                 encoding="utf-8", errors="replace", timeout=300)
+        if result.returncode != 0:
+            return None
+        data = json.loads(result.stdout)
+        records = data.get("result", {}).get("records", [])
+        return records[0]["DurableId"] if records else None
+    except Exception:
+        return None
 
 
 def list_layouts_scoped(sf_exe, object_name, org_alias, sfdx_root):
@@ -302,20 +334,25 @@ def list_layouts_scoped(sf_exe, object_name, org_alias, sfdx_root):
     stored under PersonAccount, not Account).
 
     Best-effort: if this query fails for any reason (field not supported,
-    permission issue, etc.), returns None so the caller can fall back to
-    the slower but guaranteed-correct full listing instead of silently
-    returning an incomplete result.
+    permission issue, etc.), returns (None, error_detail) so the caller can
+    fall back to the slower but guaranteed-correct full listing instead of
+    silently returning an incomplete result -- AND so the real reason is
+    visible instead of a generic, misleading "not found."
     """
-    # NOTE: previously tried to expand known object-prefix aliases (e.g.
-    # Account/PersonAccount) via a hardcoded OBJECT_PREFIX_VARIANTS dict --
-    # found via actual execution testing that this dict no longer exists
-    # in this file (a leftover from when we moved to the fully generic,
-    # object-agnostic search_layouts_by_name), silently breaking this
-    # function. Fixed by just querying the exact object name given --
-    # the real generic cross-prefix matching already lives in
-    # search_layouts_by_name (tried first, elsewhere), so this scoped
-    # fallback doesn't need to duplicate that logic.
+    # Real bug found and fixed here: TableEnumOrId stores the readable
+    # object name only for STANDARD objects (e.g. 'Account'). For CUSTOM
+    # objects (e.g. 'Address_vod__c') it stores the object's raw internal
+    # Id instead -- confirmed via the exact same quirk resolve_table_enum_ids
+    # exists to handle, just in the opposite direction. Filtering by the
+    # literal object name alone means this query silently, correctly
+    # returns zero rows for every custom object, regardless of whether
+    # real layouts exist -- not an error, just the wrong filter value.
+    # Fixed by ALSO trying the object's resolved DurableId alongside the
+    # literal name, covering both standard and custom objects in one query.
     prefixes_to_try = [object_name]
+    resolved_id = resolve_object_name_to_durable_id(sf_exe, object_name, org_alias, sfdx_root)
+    if resolved_id and resolved_id not in prefixes_to_try:
+        prefixes_to_try.append(resolved_id)
     object_list = ", ".join(f"'{p}'" for p in prefixes_to_try)
     query = f"SELECT Id, Name, TableEnumOrId FROM Layout WHERE TableEnumOrId IN ({object_list})"
     cmd = [sf_exe, "data", "query", "--use-tooling-api",
@@ -324,7 +361,7 @@ def list_layouts_scoped(sf_exe, object_name, org_alias, sfdx_root):
         result = subprocess.run(cmd, cwd=sfdx_root, capture_output=True, text=True,
                                  encoding="utf-8", errors="replace", timeout=300)
         if result.returncode != 0:
-            return None
+            return None, f"CLI returned an error (exit code {result.returncode}): {result.stderr or result.stdout}"
         data = json.loads(result.stdout)
         records = data.get("result", {}).get("records", [])
         # Reshape into the same {"fullName": ..., "id": ...} format
@@ -337,9 +374,9 @@ def list_layouts_scoped(sf_exe, object_name, org_alias, sfdx_root):
             {"fullName": f"{id_to_name.get(r['TableEnumOrId'], r['TableEnumOrId'])}-{r['Name']}", "id": r["Id"]}
             for r in records if r.get("TableEnumOrId") and r.get("Name")
         ]
-        return reshaped
-    except Exception:
-        return None
+        return reshaped, None
+    except Exception as e:
+        return None, f"{type(e).__name__}: {e}"
 
 
 def list_all_layouts(sf_exe, org_alias, sfdx_root):
@@ -458,7 +495,7 @@ def fetch_veeva_layout(object_name, layout_name, org_alias, sfdx_root="."):
     # reason -- correctness is never sacrificed for speed.
     all_layouts = search_layouts_by_name(sf_exe, layout_name, org_alias, sfdx_root)
     if not all_layouts:
-        all_layouts = list_layouts_scoped(sf_exe, object_name, org_alias, sfdx_root)
+        all_layouts, _scoped_error = list_layouts_scoped(sf_exe, object_name, org_alias, sfdx_root)
     if all_layouts is None:
         all_layouts, list_error = list_all_layouts(sf_exe, org_alias, sfdx_root)
         if list_error:

@@ -1,0 +1,5188 @@
+{
+  "entries": [
+    {
+      "layout_section": "Buttons (page-level)",
+      "element_type": "Custom Button",
+      "api_name": "Edit_DCR_vod",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "Decision Needed"
+      },
+      "target": {
+        "api_name": "\u2014 (blocked)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "Decision Needed: build blocked until business/architecture call is made",
+      "notes": "Veeva Data Change Request workflow. No LSC native equivalent - decide whether DCR/data-steward process is in scope or handled elsewhere (e.g. MDM tool)."
+    },
+    {
+      "layout_section": "Buttons (page-level)",
+      "element_type": "Custom Button",
+      "api_name": "Record_a_Call",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "Decision Needed"
+      },
+      "target": {
+        "api_name": "\u2014 (blocked)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "Decision Needed: build blocked until business/architecture call is made",
+      "notes": "Core Veeva call-reporting entry point. Calls were not part of the migrated data scope (Accounts/Address/Affiliations/Child Accounts) - needs an explicit go/no-go before building.",
+      "also_appears_in_sections": [
+        "Actions (Highlights Panel)"
+      ]
+    },
+    {
+      "layout_section": "Buttons (page-level)",
+      "element_type": "Custom Button",
+      "api_name": "View_Hierarchy_vod",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Rebuild",
+        "original": "Rebuild"
+      },
+      "target": {
+        "api_name": "\u2014 (no direct target)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_rebuild",
+      "basis": "Rebuild: needs custom LWC / Lightning action \u2014 cannot auto-generate",
+      "notes": "Veeva account hierarchy viewer. Check if a native LSC/Lightning hierarchy component covers this before building custom.",
+      "also_appears_in_sections": [
+        "Actions (Highlights Panel)"
+      ]
+    },
+    {
+      "layout_section": "Buttons (page-level)",
+      "element_type": "Custom Button",
+      "api_name": "MultiChannel_Calendar_vod",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "Retire (proposed)"
+      },
+      "target": {
+        "api_name": "\u2014 (proposed removal)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "Retire: flag for sign-off, do not silently drop",
+      "notes": "Multichannel comms calendar - outside current POC scope (Account Management only). Confirm and drop."
+    },
+    {
+      "layout_section": "Account Detail",
+      "element_type": "Field",
+      "api_name": "Name",
+      "behavior": "Required",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "Name",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard field, unchanged",
+      "notes": "Standard field.",
+      "also_appears_in_sections": [
+        "Mini/Compact Layout"
+      ]
+    },
+    {
+      "layout_section": "Account Detail",
+      "element_type": "Field",
+      "api_name": "ParentId",
+      "behavior": "Edit",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "ParentId",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard field, unchanged",
+      "notes": "Standard field.",
+      "also_appears_in_sections": [
+        "Mini/Compact Layout"
+      ]
+    },
+    {
+      "layout_section": "Account Detail",
+      "element_type": "Field",
+      "api_name": "Network_Major_Class_of_Trade__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "Network_Major_Class_of_Trade__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Confirm 'Network' prefix isn't tied to Veeva Network/OneKey MDM integration before recreating."
+    },
+    {
+      "layout_section": "Account Detail",
+      "element_type": "Field",
+      "api_name": "Network_HCO_Status__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "Network_HCO_Status__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Same flag as above - verify no Network/MDM dependency."
+    },
+    {
+      "layout_section": "Account Detail",
+      "element_type": "Field",
+      "api_name": "State_Society__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "State_Society__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field as-is."
+    },
+    {
+      "layout_section": "Account Detail",
+      "element_type": "Field",
+      "api_name": "RecordTypeId",
+      "behavior": "Edit",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "RecordTypeId",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard field, unchanged",
+      "notes": "HCO Record Type must exist and match in target org."
+    },
+    {
+      "layout_section": "Account Detail",
+      "element_type": "Field",
+      "api_name": "SP_Account_Type__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Account_Type__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Detail",
+      "element_type": "Field",
+      "api_name": "SP_System_Account_Type__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_System_Account_Type__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Detail",
+      "element_type": "Field",
+      "api_name": "SP_Territory_Owner__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Territory_Owner__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Verify field type/behavior against LSC territory model before recreating - Veeva territory concept may differ from LSC's."
+    },
+    {
+      "layout_section": "Custom Links",
+      "element_type": "Custom Link",
+      "api_name": "View_User_Territory_vod",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Rebuild",
+        "original": "Rebuild"
+      },
+      "target": {
+        "api_name": "\u2014 (no direct target)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_rebuild",
+      "basis": "Rebuild: needs custom LWC / Lightning action \u2014 cannot auto-generate",
+      "notes": "Veeva JS custom link - will not function in Lightning as-is. Find native equivalent or rebuild as a Lightning action."
+    },
+    {
+      "layout_section": "Contact Information",
+      "element_type": "Field",
+      "api_name": "Phone",
+      "behavior": "Edit",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "Phone",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard field, unchanged",
+      "notes": "Standard field."
+    },
+    {
+      "layout_section": "Contact Information",
+      "element_type": "Field",
+      "api_name": "Website",
+      "behavior": "Edit",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "Website",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard field, unchanged",
+      "notes": "Standard field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Target__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Target__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Contracting_Entity__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Contracting_Entity__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Customer_Adoption_Curve__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Customer_Adoption_Curve__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "Segmentation__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "Segmentation__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Misc_J_Code__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Misc_J_Code__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_GPO__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_GPO__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Primary_Wholesaler__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Primary_Wholesaler__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Secondary_Wholesaler__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Secondary_Wholesaler__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "IST_Target__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "IST_Target__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Possible_Account_Jumper__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Possible_Account_Jumper__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_OCM__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_OCM__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Spectrum_Relationship__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Spectrum_Relationship__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Contract_Driven__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Contract_Driven__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Value_Driven__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Value_Driven__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Decile__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Decile__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Account Manager Customer Attributes",
+      "element_type": "Field",
+      "api_name": "SP_Payer_Mix__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Payer_Mix__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "P+T Process",
+      "element_type": "Field",
+      "api_name": "SP_P_T_Approval__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_P_T_Approval__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "P+T Process",
+      "element_type": "Field",
+      "api_name": "SP_Identify_Sponsor_Advocate__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Identify_Sponsor_Advocate__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "P+T Process",
+      "element_type": "Field",
+      "api_name": "SP_Requires_clinical_review__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Requires_clinical_review__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "P+T Process",
+      "element_type": "Field",
+      "api_name": "Support_from_Executive_Team__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "Support_from_Executive_Team__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "P+T Process",
+      "element_type": "Field",
+      "api_name": "SP_What_is_the_anticipated_timeline__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_What_is_the_anticipated_timeline__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "P+T Process",
+      "element_type": "Field",
+      "api_name": "SP_Educate_Support_HCP_s__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Educate_Support_HCP_s__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "P+T Process",
+      "element_type": "Field",
+      "api_name": "SP_Contract_review__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_Contract_review__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "P+T Process",
+      "element_type": "Field",
+      "api_name": "Support_from_FRM_s__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "Support_from_FRM_s__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "P+T Process",
+      "element_type": "Field",
+      "api_name": "Other__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "Other__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Sphere of Influence",
+      "element_type": "Embedded Lightning Page",
+      "api_name": "AccountSphereOfInfluenceLgtnVod",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "Decision Needed"
+      },
+      "target": {
+        "api_name": "\u2014 (blocked)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "Decision Needed: build blocked until business/architecture call is made",
+      "notes": "Veeva-managed embedded component, no LSC native equivalent. Needs a custom LWC to fully replicate, or a scoped decision to omit for POC."
+    },
+    {
+      "layout_section": "My Territory Information",
+      "element_type": "Embedded Lightning Page",
+      "api_name": "AccountTerritoryInfoLgtnVod",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "Decision Needed"
+      },
+      "target": {
+        "api_name": "\u2014 (blocked)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "Decision Needed: build blocked until business/architecture call is made",
+      "notes": "Veeva-managed embedded component. Check whether Salesforce native Territory Management (supported in LSC) covers this before building custom."
+    },
+    {
+      "layout_section": "Identification Numbers",
+      "element_type": "Field",
+      "api_name": "External_ID_vod__c",
+      "behavior": "Edit",
+      "veeva_managed": "Yes",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "External_ID_vod__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Ties to Account Identifier / External ID / Network External ID mapping already explored - use that decision here."
+    },
+    {
+      "layout_section": "Identification Numbers",
+      "element_type": "Field",
+      "api_name": "SP_State_License__c",
+      "behavior": "Edit",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "SP_State_License__c",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Verified: same API name present in actual LSC target layout file",
+      "notes": "Recreate custom field."
+    },
+    {
+      "layout_section": "Address Information",
+      "element_type": "Section (empty in metadata)",
+      "api_name": "-",
+      "behavior": "-",
+      "veeva_managed": "Yes (Veeva dynamic)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "Retire (as literal section)"
+      },
+      "target": {
+        "api_name": "\u2014 (proposed removal)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "Retire: flag for sign-off, do not silently drop",
+      "notes": "Veeva injects address fields at runtime via VMocs, not static layout items. Superseded by ContactPointAddress related list/page design."
+    },
+    {
+      "layout_section": "Account Information",
+      "element_type": "Section (empty in metadata)",
+      "api_name": "-",
+      "behavior": "-",
+      "veeva_managed": "Yes (Veeva dynamic)",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "Decision Needed"
+      },
+      "target": {
+        "api_name": "\u2014 (blocked)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "Decision Needed: build blocked until business/architecture call is made",
+      "notes": "Empty in metadata - confirm what Veeva renders here at runtime before assuming it's fully covered elsewhere."
+    },
+    {
+      "layout_section": "Description Information",
+      "element_type": "Section (empty in metadata)",
+      "api_name": "-",
+      "behavior": "-",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "-",
+        "object": "\u2014",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard element, unchanged",
+      "notes": "Standard Description field, likely auto-injected."
+    },
+    {
+      "layout_section": "System Information",
+      "element_type": "Field",
+      "api_name": "CreatedById",
+      "behavior": "Readonly",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "CreatedById",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard field, unchanged",
+      "notes": "Standard field."
+    },
+    {
+      "layout_section": "System Information",
+      "element_type": "Field",
+      "api_name": "LastModifiedById",
+      "behavior": "Readonly",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "LastModifiedById",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard field, unchanged",
+      "notes": "Standard field."
+    },
+    {
+      "layout_section": "Mini/Compact Layout",
+      "element_type": "Field",
+      "api_name": "Name",
+      "behavior": "-",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "Name",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard field, unchanged",
+      "notes": "Used in related-list preview.",
+      "also_appears_in_sections": [
+        "Account Detail"
+      ]
+    },
+    {
+      "layout_section": "Mini/Compact Layout",
+      "element_type": "Field",
+      "api_name": "ParentId",
+      "behavior": "-",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "ParentId",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard field, unchanged",
+      "notes": "Used in related-list preview.",
+      "also_appears_in_sections": [
+        "Account Detail"
+      ]
+    },
+    {
+      "layout_section": "Actions (Highlights Panel)",
+      "element_type": "Quick Action",
+      "api_name": "Account.EditAccountLgtnVod",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Rebuild",
+        "original": "Rebuild"
+      },
+      "target": {
+        "api_name": "\u2014 (no direct target)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_rebuild",
+      "basis": "Rebuild: needs custom LWC / Lightning action \u2014 cannot auto-generate",
+      "notes": "Veeva Lightning edit action. Replace with standard Edit action in LSC unless custom edit logic is required."
+    },
+    {
+      "layout_section": "Actions (Highlights Panel)",
+      "element_type": "Custom Button",
+      "api_name": "Record_a_Call",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "Decision Needed"
+      },
+      "target": {
+        "api_name": "\u2014 (blocked)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "Decision Needed: build blocked until business/architecture call is made",
+      "notes": "Duplicate of page-level button above - same decision applies.",
+      "also_appears_in_sections": [
+        "Buttons (page-level)"
+      ]
+    },
+    {
+      "layout_section": "Actions (Highlights Panel)",
+      "element_type": "Standard Button",
+      "api_name": "Delete",
+      "behavior": "-",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "Delete",
+        "object": "\u2014",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard element, unchanged",
+      "notes": "Standard action."
+    },
+    {
+      "layout_section": "Actions (Highlights Panel)",
+      "element_type": "Standard Button",
+      "api_name": "ChangeOwnerOne",
+      "behavior": "-",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "ChangeOwnerOne",
+        "object": "\u2014",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard element, unchanged",
+      "notes": "Standard action."
+    },
+    {
+      "layout_section": "Actions (Highlights Panel)",
+      "element_type": "Standard Button",
+      "api_name": "ChangeRecordType",
+      "behavior": "-",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "ChangeRecordType",
+        "object": "\u2014",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard element, unchanged",
+      "notes": "Standard action."
+    },
+    {
+      "layout_section": "Actions (Highlights Panel)",
+      "element_type": "Custom Button",
+      "api_name": "View_Hierarchy_vod",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Rebuild",
+        "original": "Rebuild"
+      },
+      "target": {
+        "api_name": "\u2014 (no direct target)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_rebuild",
+      "basis": "Rebuild: needs custom LWC / Lightning action \u2014 cannot auto-generate",
+      "notes": "Duplicate of page-level button above - same decision applies.",
+      "also_appears_in_sections": [
+        "Buttons (page-level)"
+      ]
+    },
+    {
+      "layout_section": "Actions (Highlights Panel)",
+      "element_type": "Standard Button",
+      "api_name": "PrintableView",
+      "behavior": "-",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "PrintableView",
+        "object": "\u2014",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard element, unchanged",
+      "notes": "Standard action."
+    },
+    {
+      "layout_section": "Actions (Highlights Panel)",
+      "element_type": "Quick Action",
+      "api_name": "SendEmail",
+      "behavior": "-",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "SendEmail",
+        "object": "\u2014",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard element, unchanged",
+      "notes": "Standard action."
+    },
+    {
+      "layout_section": "Related Lists",
+      "element_type": "Related List",
+      "api_name": "Call2_vod__c.Account_vod__c",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": "Call2_vod__c",
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "Decision Needed"
+      },
+      "target": {
+        "api_name": "\u2014 (blocked)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "Decision Needed: build blocked until business/architecture call is made",
+      "notes": "Core call-reporting related list. Not part of migrated data scope - needs explicit go/no-go with business before build."
+    },
+    {
+      "layout_section": "Related Lists",
+      "element_type": "Related List",
+      "api_name": "Account_Territory_Loader_vod__c.Account_vod__c",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": "Account_Territory_Loader_vod__c",
+      "classification": {
+        "canonical": "Retire",
+        "original": "Retire (proposed)"
+      },
+      "target": {
+        "api_name": "\u2014 (proposed removal)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "Retire: flag for sign-off, do not silently drop",
+      "notes": "Looks like an admin/staging loader object, not typically end-user facing. Confirm and drop."
+    },
+    {
+      "layout_section": "Related Lists",
+      "element_type": "Related List",
+      "api_name": "Address_vod__c.Account_vod__c",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": "Address_vod__c",
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "ContactPointAddress (related list)",
+        "object": "ContactPointAddress",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From existing Address/Affiliation/Child Account data mapping",
+      "notes": "Target: ContactPointAddress related list - reuses your existing Address migration mapping."
+    },
+    {
+      "layout_section": "Related Lists",
+      "element_type": "Related List",
+      "api_name": "Affiliation_vod__c.To_Account_vod__c",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": "Affiliation_vod__c",
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "ProviderAffiliation (related list)",
+        "object": "ProviderAffiliation",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From existing Address/Affiliation/Child Account data mapping",
+      "notes": "Target: ProviderAffiliation related list - reuses your existing Affiliation migration mapping."
+    },
+    {
+      "layout_section": "Related Lists",
+      "element_type": "Related List",
+      "api_name": "Child_Account_vod__c.Child_Account_vod__c",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": "Child_Account_vod__c",
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "\u2014 (unconfirmed \u2014 do not build)",
+        "object": "\u2014 (unconfirmed)",
+        "confidence": "Low"
+      },
+      "action": "flag_manual_review",
+      "basis": "No confirmed 1:1 target in project docs \u2014 doc only lists Child_Account_vod__c as one of the mapped objects, without naming its LSC target. Standard Salesforce Account already has native parent/child via ParentId (self-lookup) \u2014 confirm with data migration team whether this related list maps to Account hierarchy, a custom junction object, or something else before building.",
+      "notes": "Already migrated per Child Account work - map related list to new object/relationship."
+    },
+    {
+      "layout_section": "Related Lists",
+      "element_type": "Related List",
+      "api_name": "Child_Account_vod__c.Parent_Account_vod__c",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": "Child_Account_vod__c",
+      "classification": {
+        "canonical": "Map",
+        "original": "Map"
+      },
+      "target": {
+        "api_name": "\u2014 (unconfirmed \u2014 do not build)",
+        "object": "\u2014 (unconfirmed)",
+        "confidence": "Low"
+      },
+      "action": "flag_manual_review",
+      "basis": "No confirmed 1:1 target in project docs \u2014 doc only lists Child_Account_vod__c as one of the mapped objects, without naming its LSC target. Standard Salesforce Account already has native parent/child via ParentId (self-lookup) \u2014 confirm with data migration team whether this related list maps to Account hierarchy, a custom junction object, or something else before building.",
+      "notes": "Reverse relationship of the above - map alongside it."
+    },
+    {
+      "layout_section": "Related Lists",
+      "element_type": "Related List",
+      "api_name": "SP_HCP_Rep_Request__c.Account__c",
+      "behavior": "-",
+      "veeva_managed": "No (custom, non-vod)",
+      "related_source_object": "SP_HCP_Rep_Request__c",
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "SP_HCP_Rep_Request__c.Account__c (unchanged, non-Veeva object)",
+        "object": "SP_HCP_Rep_Request__c",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard/custom object, unchanged",
+      "notes": "Non-Veeva custom object - migrate object + relationship as-is."
+    },
+    {
+      "layout_section": "Related Lists",
+      "element_type": "Related List",
+      "api_name": "RelatedEntityHistoryList",
+      "behavior": "-",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Direct",
+        "original": "Direct"
+      },
+      "target": {
+        "api_name": "RelatedEntityHistoryList (standard, unchanged)",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "Standard/custom object, unchanged",
+      "notes": "Standard Salesforce field history tracking."
+    },
+    {
+      "layout_section": "Related Lists",
+      "element_type": "Related List",
+      "api_name": "Survey_Target_vod__c.Account_vod__c",
+      "behavior": "-",
+      "veeva_managed": "Yes",
+      "related_source_object": "Survey_Target_vod__c",
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "Decision Needed"
+      },
+      "target": {
+        "api_name": "\u2014 (blocked)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "Decision Needed: build blocked until business/architecture call is made",
+      "notes": "Veeva Survey feature - outside current scope. Confirm and drop, or scope in."
+    },
+    {
+      "layout_section": "Layout Settings",
+      "element_type": "Setting",
+      "api_name": "showHighlightsPanel = false",
+      "behavior": "-",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "Decision Needed"
+      },
+      "target": {
+        "api_name": "\u2014 (blocked)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "Decision Needed: build blocked until business/architecture call is made",
+      "notes": "Classic layouts often disable this; Lightning pages generally expect the Highlights Panel on. Reconsider for LSC."
+    },
+    {
+      "layout_section": "Layout Settings",
+      "element_type": "Setting",
+      "api_name": "summaryLayout masterLabel (hardcoded ID: 00h5w00000S5Oq1)",
+      "behavior": "-",
+      "veeva_managed": "No",
+      "related_source_object": null,
+      "classification": {
+        "canonical": "Rebuild",
+        "original": "Rebuild"
+      },
+      "target": {
+        "api_name": "\u2014 (no direct target)",
+        "object": "\u2014",
+        "confidence": "N/A"
+      },
+      "action": "flag_rebuild",
+      "basis": "Rebuild: needs custom LWC / Lightning action \u2014 cannot auto-generate",
+      "notes": "This literal ID is org-specific and will not resolve in the LSC org - compact layout must be rebuilt/reassigned there."
+    },
+    {
+      "layout_section": "Board",
+      "element_type": "Field",
+      "api_name": "Fax",
+      "veeva_object": "Account",
+      "veeva_label": "Account Fax",
+      "veeva_datatype": "phone",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "Fax",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD Fax to Account layout"
+    },
+    {
+      "layout_section": "Board",
+      "element_type": "Field",
+      "api_name": "Formatted_Name_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Name",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "REFERENCE"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "From layout mapping file (status: REFERENCE). System field \u2014 auto-populated, may not need on layout"
+    },
+    {
+      "layout_section": "Board",
+      "element_type": "Field",
+      "api_name": "Do_Not_Call_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Do Not Call?",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "PrivacyConsentStatus",
+        "object": "ContactPointConsent",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD PrivacyConsentStatus to ContactPointConsent layout"
+    },
+    {
+      "layout_section": "Board",
+      "element_type": "Field",
+      "api_name": "Spend_Amount__c",
+      "veeva_object": "Account",
+      "veeva_label": "Spend Amount",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Spend_Amount__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Spend_Amount__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Board",
+      "element_type": "Field",
+      "api_name": "Spend_Status_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Spend Status",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "REFERENCE"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "From layout mapping file (status: REFERENCE). System field \u2014 auto-populated, may not need on layout"
+    },
+    {
+      "layout_section": "Board",
+      "element_type": "Field",
+      "api_name": "Primary_Parent_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Primary Parent",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "ParentId",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD ParentId to Account layout"
+    },
+    {
+      "layout_section": "Board",
+      "element_type": "Field",
+      "api_name": "Default_Order_Type_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Default Order Type",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Default_Order_Type_vod__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Default_Order_Type_vod__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Board",
+      "element_type": "Field",
+      "api_name": "Network_HCO_Type__c",
+      "veeva_object": "Account",
+      "veeva_label": "HCO Type",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": "ProviderType",
+        "object": "HealthcareProvider",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD ProviderType to HealthcareProvider layout (verify mapping first)"
+    },
+    {
+      "layout_section": "Board",
+      "element_type": "Field",
+      "api_name": "Total_MDs_DOs__c",
+      "veeva_object": "Account",
+      "veeva_label": "Total # MDs/DOs",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Total_MDs_DOs__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Total_MDs_DOs__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Board",
+      "element_type": "Field",
+      "api_name": "NumberOfEmployees",
+      "veeva_object": "Account",
+      "veeva_label": "Employees",
+      "veeva_datatype": "int",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "NumberOfEmployees",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD NumberOfEmployees to Account layout"
+    },
+    {
+      "layout_section": "Employer",
+      "element_type": "Field",
+      "api_name": "Departments__c",
+      "veeva_object": "Account",
+      "veeva_label": "# Departments",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Departments__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Departments__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Extended Care",
+      "element_type": "Field",
+      "api_name": "Target__c",
+      "veeva_object": "Account",
+      "veeva_label": "Target?",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Target__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Target__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Extended Care",
+      "element_type": "Field",
+      "api_name": "Total_Pharmacists__c",
+      "veeva_object": "Account",
+      "veeva_label": "Total # Pharmacists",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Total_Pharmacists__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Total_Pharmacists__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Extended Care",
+      "element_type": "Field",
+      "api_name": "Beds__c",
+      "veeva_object": "Account",
+      "veeva_label": "# Beds",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": "TotalLicensedBeds",
+        "object": "HealthcareProvider",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD TotalLicensedBeds to HealthcareProvider layout (verify mapping first)"
+    },
+    {
+      "layout_section": "Hospital",
+      "element_type": "Field",
+      "api_name": "Group_Specialty_2_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Group Specialty 2",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "SpecialtyId",
+        "object": "HealthcareProviderSpecialty",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD SpecialtyId to HealthcareProviderSpecialty layout"
+    },
+    {
+      "layout_section": "Hospital",
+      "element_type": "Field",
+      "api_name": "Group_Specialty_1_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Group Specialty 1",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "SpecialtyId",
+        "object": "HealthcareProviderSpecialty",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD SpecialtyId to HealthcareProviderSpecialty layout"
+    },
+    {
+      "layout_section": "Hospital",
+      "element_type": "Field",
+      "api_name": "AHA__c",
+      "veeva_object": "Account",
+      "veeva_label": "AHA #",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "AHA__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field AHA__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Hospital",
+      "element_type": "Field",
+      "api_name": "NPI_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "NPI #",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "Npi",
+        "object": "HealthcareProviderNpi",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD Npi to HealthcareProviderNpi layout"
+    },
+    {
+      "layout_section": "KNI Veeva Quick Start Instituti",
+      "element_type": "Field",
+      "api_name": "KNI_Status__c",
+      "veeva_object": "Account",
+      "veeva_label": "KNI_Status__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "KNI Veeva Quick Start Instituti",
+      "element_type": "Field",
+      "api_name": "KNI_Client_ID__c",
+      "veeva_object": "Account",
+      "veeva_label": "KNI_Client_ID__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "MCO",
+      "element_type": "Field",
+      "api_name": "Account_Type__c",
+      "veeva_object": "Account",
+      "veeva_label": "Account Type",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": "Type",
+        "object": "Account",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD Type to Account layout (verify mapping first)"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Tax_Status__c",
+      "veeva_object": "Account",
+      "veeva_label": "Tax Status",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Tax_Status__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Tax_Status__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Model__c",
+      "veeva_object": "Account",
+      "veeva_label": "Model",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Model__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Model__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Offerings__c",
+      "veeva_object": "Account",
+      "veeva_label": "Offerings",
+      "veeva_datatype": "multipicklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Offerings__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Offerings__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "OwnerId",
+      "veeva_object": "Account",
+      "veeva_label": "Owner ID",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "OwnerId",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD OwnerId to Account layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Business_Description__c",
+      "veeva_object": "Account",
+      "veeva_label": "Business Description",
+      "veeva_datatype": "textarea",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Business_Description__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Business_Description__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Contracts_Process__c",
+      "veeva_object": "Account",
+      "veeva_label": "Contracts Process",
+      "veeva_datatype": "textarea",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Contracts_Process__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Contracts_Process__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Total_Revenue_000__c",
+      "veeva_object": "Account",
+      "veeva_label": "Total Revenue (000)",
+      "veeva_datatype": "currency",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Total_Revenue_000__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Total_Revenue_000__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Net_Income_Loss_000__c",
+      "veeva_object": "Account",
+      "veeva_label": "Net Income (Loss) (000)",
+      "veeva_datatype": "currency",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Net_Income_Loss_000__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Net_Income_Loss_000__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "PMPM_Income_Loss_000__c",
+      "veeva_object": "Account",
+      "veeva_label": "PMPM Income (Loss) (000)",
+      "veeva_datatype": "currency",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "PMPM_Income_Loss_000__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field PMPM_Income_Loss_000__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Commercial_Premiums_PMPM__c",
+      "veeva_object": "Account",
+      "veeva_label": "Commercial Premiums (PMPM)",
+      "veeva_datatype": "currency",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Commercial_Premiums_PMPM__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Commercial_Premiums_PMPM__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Medical_Loss_Ratio__c",
+      "veeva_object": "Account",
+      "veeva_label": "Medical Loss Ratio",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Medical_Loss_Ratio__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Medical_Loss_Ratio__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Medical_Expenses_PMPM__c",
+      "veeva_object": "Account",
+      "veeva_label": "Medical Expenses (PMPM)",
+      "veeva_datatype": "currency",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Medical_Expenses_PMPM__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Medical_Expenses_PMPM__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Commercial_Patient_Days_1000__c",
+      "veeva_object": "Account",
+      "veeva_label": "Commercial Patient Days/1000",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Commercial_Patient_Days_1000__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Commercial_Patient_Days_1000__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Total_Lives__c",
+      "veeva_object": "Account",
+      "veeva_label": "Total # Lives",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Total_Lives__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Total_Lives__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Total_Physicians_Enrolled__c",
+      "veeva_object": "Account",
+      "veeva_label": "Total # Physicians Enrolled",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Total_Physicians_Enrolled__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Total_Physicians_Enrolled__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "HMO_Market_Shr__c",
+      "veeva_object": "Account",
+      "veeva_label": "HMO Market Shr",
+      "veeva_datatype": "percent",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "HMO_Market_Shr__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field HMO_Market_Shr__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Medicare__c",
+      "veeva_object": "Account",
+      "veeva_label": "Medicare",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Medicare__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Medicare__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "Medicaid__c",
+      "veeva_object": "Account",
+      "veeva_label": "Medicaid",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Medicaid__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Medicaid__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "HMO__c",
+      "veeva_object": "Account",
+      "veeva_label": "HMO",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "HMO__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field HMO__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "HMO_POS__c",
+      "veeva_object": "Account",
+      "veeva_label": "HMO/POS",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "HMO_POS__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field HMO_POS__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "PPO__c",
+      "veeva_object": "Account",
+      "veeva_label": "PPO",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "PPO__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field PPO__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "MCO Plan",
+      "element_type": "Field",
+      "api_name": "PPO_POS__c",
+      "veeva_object": "Account",
+      "veeva_label": "PPO/POS",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "PPO_POS__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field PPO_POS__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "NWK Veeva Quick Start Instituti",
+      "element_type": "Field",
+      "api_name": "Network_External_ID__c",
+      "veeva_object": "Account",
+      "veeva_label": "Network External ID",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "SourceSystemIdentifier",
+        "object": "Account",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD SourceSystemIdentifier to Account layout"
+    },
+    {
+      "layout_section": "NWK Veeva Quick Start Instituti",
+      "element_type": "Field",
+      "api_name": "NET_Account_Type__c",
+      "veeva_object": "Account",
+      "veeva_label": "z_Network Account Type",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "NET_Account_Type__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field NET_Account_Type__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "NWK Veeva Quick Start Instituti",
+      "element_type": "Field",
+      "api_name": "Network_HCP_Status__c",
+      "veeva_object": "Account",
+      "veeva_label": "HCP Status",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": "Status",
+        "object": "HealthcareProvider",
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD Status to HealthcareProvider layout (verify mapping first)"
+    },
+    {
+      "layout_section": "NWK Veeva Quick Start Instituti",
+      "element_type": "Field",
+      "api_name": "NET_TIN__c",
+      "veeva_object": "Account",
+      "veeva_label": "Network TIN",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "NET_TIN__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field NET_TIN__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Pharmacy",
+      "element_type": "Field",
+      "api_name": "Account_Group_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Account Group",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Account_Group_vod__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Account_Group_vod__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Pharmacy",
+      "element_type": "Field",
+      "api_name": "No_Orders_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "No Orders",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "No_Orders_vod__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field No_Orders_vod__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Pharmacy",
+      "element_type": "Field",
+      "api_name": "Order_Type_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Order Type",
+      "veeva_datatype": "multipicklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Order_Type_vod__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Order_Type_vod__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Practice layout",
+      "element_type": "Field",
+      "api_name": "Practice_at_Hospital_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Practice at Hospital?",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "IsPrimaryFacility",
+        "object": "HealthcarePractitionerFacility",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD IsPrimaryFacility to HealthcarePractitionerFacility layout"
+    },
+    {
+      "layout_section": "Practice layout",
+      "element_type": "Field",
+      "api_name": "Practice_Near_Hospital_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Practice Near Hospital?",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Practice_Near_Hospital_vod__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Practice_Near_Hospital_vod__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "SP_Commercial_HCO",
+      "element_type": "Field",
+      "api_name": "SP_FRM_Target__c",
+      "veeva_object": "Account",
+      "veeva_label": "FRM Target",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "SP_FRM_Target__c",
+        "object": "Account",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field SP_FRM_Target__c on Account, then add to layout"
+    },
+    {
+      "layout_section": "Veeva Essentials Network Instit",
+      "element_type": "Field",
+      "api_name": "Institution_Type__c",
+      "veeva_object": "Account",
+      "veeva_label": "Institution Type",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "ProviderClass",
+        "object": "HealthcareProvider",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD ProviderClass to HealthcareProvider layout"
+    },
+    {
+      "layout_section": "Veeva Essentials Network Instit",
+      "element_type": "Field",
+      "api_name": "Specialty_1_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Specialty",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "IsPrimarySpecialty",
+        "object": "HealthcareProviderSpecialty",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD IsPrimarySpecialty to HealthcareProviderSpecialty layout"
+    },
+    {
+      "layout_section": "Veeva Essentials Network Instit",
+      "element_type": "Field",
+      "api_name": "Specialty_2_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Specialty 2",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "IsPrimarySpecialty",
+        "object": "HealthcareProviderSpecialty",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD IsPrimarySpecialty to HealthcareProviderSpecialty layout"
+    },
+    {
+      "layout_section": "Veeva Essentials Network Instit",
+      "element_type": "Field",
+      "api_name": "Country_vod__c",
+      "veeva_object": "Account",
+      "veeva_label": "Country",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "Country",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD Country to Address layout"
+    },
+    {
+      "layout_section": "Veeva Essentials Network Instit",
+      "element_type": "Field",
+      "api_name": "Network_Is_Veeva_Mastered__c",
+      "veeva_object": "Account",
+      "veeva_label": "Veeva Mastered",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Network_Is_Veeva_Mastered__c",
+        "object": "HealthcarePractitionerFacility",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Network_Is_Veeva_Mastered__c on HealthcarePractitionerFacility, then add to layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "City_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "City",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "City",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD City to Address layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "State_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "State",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "State",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD State to Address layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Network_Postal_Code__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Network Postal Code",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "PostalCode",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD PostalCode to Address layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Map_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Map",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "REFERENCE"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "From layout mapping file (status: REFERENCE). System field \u2014 auto-populated, may not need on layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Phone_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Phone 1",
+      "veeva_datatype": "phone",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "TelephoneNumber",
+        "object": "ContactPointPhone",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD TelephoneNumber to ContactPointPhone layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Phone_2_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Phone 2",
+      "veeva_datatype": "phone",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "TelephoneNumber",
+        "object": "ContactPointPhone",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD TelephoneNumber to ContactPointPhone layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Fax_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Fax",
+      "veeva_datatype": "phone",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "TelephoneNumber",
+        "object": "ContactPointPhone",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD TelephoneNumber to ContactPointPhone layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Fax_2_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Fax 2",
+      "veeva_datatype": "phone",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "TelephoneNumber",
+        "object": "ContactPointPhone",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD TelephoneNumber to ContactPointPhone layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "License_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "License #",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "LicenseNumber",
+        "object": "BusinessLicense",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD LicenseNumber to BusinessLicense layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "License_Expiration_Date_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "License Expiration Date",
+      "veeva_datatype": "date",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "PeriodEnd",
+        "object": "BusinessLicense",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD PeriodEnd to BusinessLicense layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "License_Valid_To_Sample_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "License Valid To Sample",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "REFERENCE"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "From layout mapping file (status: REFERENCE). System field \u2014 auto-populated, may not need on layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "KNI_License_Last_Validated_Date__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "KNI_License_Last_Validated_Date__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Sample_Send_Status_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Sample Send Status",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Sample_Send_Status_vod__c",
+        "object": "ContactPointAddress",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Sample_Send_Status_vod__c on ContactPointAddress, then add to layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "DEA_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "DEA #",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "LicenseNumber",
+        "object": "BusinessLicense",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD LicenseNumber to BusinessLicense layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "DEA_Expiration_Date_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "DEA Expiration Date",
+      "veeva_datatype": "date",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "PeriodEnd",
+        "object": "BusinessLicense",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD PeriodEnd to BusinessLicense layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "CDS_Status_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "CDS_Status_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "CDS_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "CDS_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "CDS_Expiration_Date_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "CDS_Expiration_Date_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "KNI_Client_ID__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "KNI_Client_ID__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "CreatedById",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Created By ID",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "REFERENCE"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "From layout mapping file (status: REFERENCE). System field \u2014 auto-populated, may not need on layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "LastModifiedById",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Last Modified By ID",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "REFERENCE"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "From layout mapping file (status: REFERENCE). System field \u2014 auto-populated, may not need on layout"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "Country_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Country",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "Country",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD Country to Address layout"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "State_Distributor_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "State Distributor",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "Issuer",
+        "object": "BusinessLicense",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD Issuer to BusinessLicense layout"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "State_Distributor_Expiration_Date_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "State Distributor Expiration Date",
+      "veeva_datatype": "date",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "PeriodEnd",
+        "object": "BusinessLicense",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD PeriodEnd to BusinessLicense layout"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "Latitude_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Latitude",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "Latitude",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD Latitude to Address layout"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "Longitude_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Longitude",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "Longitude",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD Longitude to Address layout"
+    },
+    {
+      "layout_section": "NWK Rep Address Layout",
+      "element_type": "Field",
+      "api_name": "NET_Record_State__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Network Record State",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "NET_Record_State__c",
+        "object": "ContactPointAddress",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field NET_Record_State__c on ContactPointAddress, then add to layout"
+    },
+    {
+      "layout_section": "Rep Address Layout",
+      "element_type": "Field",
+      "api_name": "Zip_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Zip",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "PostalCode",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD PostalCode to Address layout"
+    },
+    {
+      "layout_section": "SP_Address",
+      "element_type": "Field",
+      "api_name": "SP_Contract__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Contract",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "SP_Contract__c",
+        "object": "ContactPointAddress",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field SP_Contract__c on ContactPointAddress, then add to layout"
+    },
+    {
+      "layout_section": "SP_Address_Admin",
+      "element_type": "Field",
+      "api_name": "Shyft_Address_ID__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Shyft Address ID",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Shyft_Address_ID__c",
+        "object": "ContactPointAddress",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Shyft_Address_ID__c on ContactPointAddress, then add to layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "zvod_Save_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Save",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Save_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Save_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "zvod_Delete_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Delete",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Delete_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Delete_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "zvod_Submit_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Submit",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Submit_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Submit_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "zvod_More_Actions_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_More_Actions",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_More_Actions_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_More_Actions_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "Parent_Address_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Parent Address",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Parent_Address_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Parent_Address_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "Allowed_Products_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Allowed Products",
+      "veeva_datatype": "textarea",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Allowed_Products_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Allowed_Products_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "Address_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Address",
+      "veeva_datatype": "textarea",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Address_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Address_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "Sub_Channel__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Sub Channel",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Sub_Channel__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Sub_Channel__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "zvod_CoBrowse_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_CoBrowse_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Engage Connect Layout",
+      "element_type": "Field",
+      "api_name": "zvod_SaveNew_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_SaveNew_vod",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_SaveNew_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_SaveNew_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Engage Connect Layout",
+      "element_type": "Field",
+      "api_name": "Call_Date_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Date",
+      "veeva_datatype": "date",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "ActivityDate",
+        "object": "Task",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD ActivityDate to Task layout"
+    },
+    {
+      "layout_section": "Engage Connect Layout",
+      "element_type": "Field",
+      "api_name": "Chat_Summary_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Chat_Summary_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Essentials Call Layout w- CLM S",
+      "element_type": "Field",
+      "api_name": "zvod_Detailing_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Detailing",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Detailing_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Detailing_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Essentials Call Layout w- CLM S",
+      "element_type": "Field",
+      "api_name": "zvod_Key_Messages_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Key_Messages",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Key_Messages_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Key_Messages_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Essentials Call Layout w- CLM S",
+      "element_type": "Field",
+      "api_name": "zvod_CLMDetails_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_CLMDetails",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_CLMDetails_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_CLMDetails_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Essentials Call Layout w- Media",
+      "element_type": "Field",
+      "api_name": "zvod_Medical_Discussion_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Medical_Discussion",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Medical_Discussion_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Medical_Discussion_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Event Layout",
+      "element_type": "Field",
+      "api_name": "Medical_Event_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Medical Event",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Medical_Event_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Medical_Event_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Event Layout",
+      "element_type": "Field",
+      "api_name": "Significant_Event__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Significant Event",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Significant_Event__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Significant_Event__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Event Layout",
+      "element_type": "Field",
+      "api_name": "zvod_Product_Discussion_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Product_Discussion",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Product_Discussion_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Product_Discussion_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Event Layout",
+      "element_type": "Field",
+      "api_name": "zvod_Followup_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Followup",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Followup_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Followup_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Event Layout",
+      "element_type": "Field",
+      "api_name": "zvod_Expenses_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Expenses",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Expenses_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Expenses_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "KNI Essentials Call Layout w- S",
+      "element_type": "Field",
+      "api_name": "zvod_Business_Account_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Location",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Business_Account_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Business_Account_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "KNI Essentials Call Layout w- S",
+      "element_type": "Field",
+      "api_name": "zvod_Account_Credentials_vod_c_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Account.Credentials_vod__c",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Account_Credentials_vod_c_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Account_Credentials_vod_c_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "KNI Essentials Call Layout w- S",
+      "element_type": "Field",
+      "api_name": "Supervising_Physician_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Supervising_Physician_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "KNI Essentials Call Layout w- S",
+      "element_type": "Field",
+      "api_name": "Signature_Date_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Signature Date",
+      "veeva_datatype": "datetime",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Signature_Date_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Signature_Date_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "KNI Essentials Call Layout w- S",
+      "element_type": "Field",
+      "api_name": "KNI_Select_Day_Shipping__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "KNI_Select_Day_Shipping__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "KNI Essentials Call Layout w- S",
+      "element_type": "Field",
+      "api_name": "zvod_Samples_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Samples",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Samples_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Samples_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Link Interaction Layout",
+      "element_type": "Field",
+      "api_name": "Link_From_Id_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Link_From_Id_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Link Interaction Layout",
+      "element_type": "Field",
+      "api_name": "Link_From_Email_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Link_From_Email_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Link Interaction Layout",
+      "element_type": "Field",
+      "api_name": "CreatedById",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Created By ID",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "REFERENCE"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "From layout mapping file (status: REFERENCE). System field \u2014 auto-populated, may not need on layout"
+    },
+    {
+      "layout_section": "Link Interaction Layout",
+      "element_type": "Field",
+      "api_name": "LastModifiedById",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Last Modified By ID",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "REFERENCE"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "From layout mapping file (status: REFERENCE). System field \u2014 auto-populated, may not need on layout"
+    },
+    {
+      "layout_section": "Link Interaction Layout",
+      "element_type": "Field",
+      "api_name": "Link_External_Id_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Link_External_Id_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Managed Markets Layout",
+      "element_type": "Field",
+      "api_name": "Location_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Location",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Location_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Location_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "Name",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Call Name",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "REFERENCE"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "From layout mapping file (status: REFERENCE). System field \u2014 auto-populated, may not need on layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "zvod_Account_Preferred_Name_vod_c_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Account.Preferred_Name_vod__c",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Account_Preferred_Name_vod_c_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Account_Preferred_Name_vod_c_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "zvod_Account_Sample_Status_vod_c_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Address_vod__c.Sample_Status_vod__c",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Account_Sample_Status_vod_c_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Account_Sample_Status_vod_c_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "License_Expiration_Date_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "License_Expiration_Date_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "PeriodEnd",
+        "object": "BusinessLicense",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD PeriodEnd to BusinessLicense layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "zvod_Account_Primary_Parent_vod_c_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Account_Primary_Parent_vod_c_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "DEA_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "DEA #",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "LicenseNumber",
+        "object": "BusinessLicense",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD LicenseNumber to BusinessLicense layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "DEA_Expiration_Date_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "DEA Expiration Date",
+      "veeva_datatype": "date",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "PeriodEnd",
+        "object": "BusinessLicense",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD PeriodEnd to BusinessLicense layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "Ship_DEA_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Ship_DEA_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "Ship_DEA_Expiration_Date_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Ship_DEA_Expiration_Date_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "Ship_ASSMCA_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Ship_ASSMCA_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "License_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "License #",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "LicenseNumber",
+        "object": "BusinessLicense",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD LicenseNumber to BusinessLicense layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "Sample_Card_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Sample Card #",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Sample_Card_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Sample_Card_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "Sample_Send_Card_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Sample Send Card #",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Sample_Send_Card_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Sample_Send_Card_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "CDS_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "CDS_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "CDS_Expiration_Date_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "CDS_Expiration_Date_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "Ship_CDS_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Ship_CDS_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "Ship_CDS_Expiration_Date_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Ship_CDS_Expiration_Date_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "zvod_Medical_Inquiry_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Medical_Inquiry_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Primary Care Layout",
+      "element_type": "Field",
+      "api_name": "Pre_Call_Notes_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Pre-Call Notes",
+      "veeva_datatype": "textarea",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Pre_Call_Notes_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Pre_Call_Notes_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Primary Care Layout",
+      "element_type": "Field",
+      "api_name": "Next_Call_Notes_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Next Call Notes",
+      "veeva_datatype": "textarea",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Next_Call_Notes_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Next_Call_Notes_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "SP_Call_Report",
+      "element_type": "Field",
+      "api_name": "zvod_Unique_Group_Activities_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Unique_Group_Activities_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "SP_Call_Report",
+      "element_type": "Field",
+      "api_name": "zvod_Survey_Target_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Survey_Target_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "SP_Call_Report_FRMs",
+      "element_type": "Field",
+      "api_name": "SP_Interaction_Type__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Interaction Type",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "SP_Interaction_Type__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field SP_Interaction_Type__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "SP_Medical_Meeting_Brief",
+      "element_type": "Field",
+      "api_name": "Survey_Target__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Survey Target",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Survey_Target__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Survey_Target__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "SP_Medical_Meeting_Brief",
+      "element_type": "Field",
+      "api_name": "Survey_Target_Name__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Survey Target Name",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Retire",
+        "original": "REFERENCE"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_retire",
+      "basis": "From layout mapping file (status: REFERENCE). System field \u2014 auto-populated, may not need on layout"
+    },
+    {
+      "layout_section": "SP_Medical_Meeting_Brief",
+      "element_type": "Field",
+      "api_name": "SP_Interaction_Channel__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Interaction Channel",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "SP_Interaction_Channel__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field SP_Interaction_Channel__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "SP_Medical_Meeting_Brief",
+      "element_type": "Field",
+      "api_name": "zvod_Attachments_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Attachments",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Attachments_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Attachments_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Vault Clinical Interaction Layo",
+      "element_type": "Field",
+      "api_name": "Subject_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Subject",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "Subject",
+        "object": "Task",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD Subject to Task layout"
+    },
+    {
+      "layout_section": "Vault Clinical Interaction Layo",
+      "element_type": "Field",
+      "api_name": "Vault_Clinical_From_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Vault_Clinical_From_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "Vault Clinical Interaction Layo",
+      "element_type": "Field",
+      "api_name": "Vault_Clinical_External_Id_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Vault_Clinical_External_Id_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "UNKNOWN"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: UNKNOWN). Run field mapping accelerator to determine target"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Account_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Account",
+      "veeva_datatype": "reference",
+      "veeva_required": "Y",
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "ParentId",
+        "object": "ContactPointAddress",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD ParentId to ContactPointAddress layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Name",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Address line 1",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "Street",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD Street to Address layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Address_line_2_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Address line 2",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD Street to Address layout (verify mapping first)"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Primary_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Primary",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "IsPrimary",
+        "object": "ContactPointAddress",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD IsPrimary to ContactPointAddress layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Shipping_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Shipping",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "AddressType",
+        "object": "ContactPointAddress",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD AddressType to ContactPointAddress layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "DEA_Address_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "DEA Address?",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "IsActive",
+        "object": "BusinessLicense",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD IsActive to BusinessLicense layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Billing_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Billing",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "AddressType",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD AddressType to Address layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Mailing_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Mailing",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "AddressType",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD AddressType to Address layout"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "License_Status_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "License Status",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD Status to BusinessLicense layout (verify mapping first)"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "DEA_Status_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "DEA Status",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD Status to BusinessLicense layout (verify mapping first)"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "DEA_Schedule_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "DEA Schedule",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD LicenseClass to BusinessLicense layout (verify mapping first)"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Office_Notes_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Office Notes",
+      "veeva_datatype": "textarea",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD Description to Address layout (verify mapping first)"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "Staff_notes_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Staff notes",
+      "veeva_datatype": "textarea",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD Description to Address layout (verify mapping first)"
+    },
+    {
+      "layout_section": "KNI Sampling Office Address Lay",
+      "element_type": "Field",
+      "api_name": "External_ID_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "External ID",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "SourceSystemIdentifier",
+        "object": "ContactPointAddress",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD SourceSystemIdentifier to ContactPointAddress layout"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "Network_Address_Type__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Network Address Type",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD AddressType to Address layout (verify mapping first)"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "Network_Address_Status__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Network Address Status",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD IsDefault to ContactPointAddress layout (verify mapping first)"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "Network_Address_Ordinal__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Network Address Rank",
+      "veeva_datatype": "double",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "PreferenceRank",
+        "object": "ContactPointAddress",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD PreferenceRank to ContactPointAddress layout"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "State_Distributor_Category_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "State Distributor Category",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD LicenseClass to BusinessLicense layout (verify mapping first)"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "State_Distributor_License_Exempt_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "State Distributor License Exempt",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD IsActive to BusinessLicense layout (verify mapping first)"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "State_Distributor_Status_vod__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "State Distributor Status",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD Status to BusinessLicense layout (verify mapping first)"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "Network_External_Id__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Network ID",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "SourceSystemIdentifier",
+        "object": "ContactPointAddress",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD SourceSystemIdentifier to ContactPointAddress layout"
+    },
+    {
+      "layout_section": "Network Address Layout",
+      "element_type": "Field",
+      "api_name": "Network_Is_Veeva_Mastered__c",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Veeva Mastered",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD IsThirdPartyAddress to ContactPointAddress layout (verify mapping first)"
+    },
+    {
+      "layout_section": "NWK Rep Address Layout",
+      "element_type": "Field",
+      "api_name": "RecordTypeId",
+      "veeva_object": "Address_vod__c",
+      "veeva_label": "Record Type ID",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "RecordTypeId",
+        "object": "Address",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD RecordTypeId to Address layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "Account_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Account",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "WhatId",
+        "object": "Task",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD WhatId to Task layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "RecordTypeId",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Record Type ID",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "RecordTypeId__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field RecordTypeId__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "Status_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Status",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD Status to Task layout (verify mapping first)"
+    },
+    {
+      "layout_section": "CoBrowse Interaction",
+      "element_type": "Field",
+      "api_name": "Call_Datetime_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Datetime",
+      "veeva_datatype": "datetime",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "ActivityDate",
+        "object": "Task",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD ActivityDate to Task layout"
+    },
+    {
+      "layout_section": "Engage Connect Layout",
+      "element_type": "Field",
+      "api_name": "Call_Channel_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Channel",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD CallType to Task layout (verify mapping first)"
+    },
+    {
+      "layout_section": "Engage Connect Layout",
+      "element_type": "Field",
+      "api_name": "Call_Type_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Call Type",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD CallType to Task layout (verify mapping first)"
+    },
+    {
+      "layout_section": "Engage Connect Layout",
+      "element_type": "Field",
+      "api_name": "OwnerId",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Owner ID",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "MAPPED"
+      },
+      "target": {
+        "api_name": "OwnerId",
+        "object": "Task",
+        "confidence": "High"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: MAPPED). ADD OwnerId to Task layout"
+    },
+    {
+      "layout_section": "Essentials Call Layout w- CLM S",
+      "element_type": "Field",
+      "api_name": "zvod_Attendees_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "zvod_Attendees",
+      "veeva_datatype": "boolean",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "zvod_Attendees_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field zvod_Attendees_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Event Layout",
+      "element_type": "Field",
+      "api_name": "Assignment_Datetime_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Assignment Datetime",
+      "veeva_datatype": "datetime",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD ReminderDateTime to Task layout (verify mapping first)"
+    },
+    {
+      "layout_section": "Managed Markets Layout",
+      "element_type": "Field",
+      "api_name": "Account_Plan_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Account Plan",
+      "veeva_datatype": "reference",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Account_Plan_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Account_Plan_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "License_Status_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "License_Status_vod__c",
+      "veeva_datatype": "?",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Decision Needed",
+        "original": "PARTIALLY_MAPPED"
+      },
+      "target": {
+        "api_name": null,
+        "object": null,
+        "confidence": "N/A"
+      },
+      "action": "flag_decision_needed",
+      "basis": "From layout mapping file (status: PARTIALLY_MAPPED). ADD Status to BusinessLicense layout (verify mapping first)"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "ASSMCA_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "ASSMCA",
+      "veeva_datatype": "string",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "ASSMCA_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field ASSMCA_vod__c on Task, then add to layout"
+    },
+    {
+      "layout_section": "Medical_Inquiry_Fulfillment_vod",
+      "element_type": "Field",
+      "api_name": "Sample_Card_Reason_vod__c",
+      "veeva_object": "Call2_vod__c",
+      "veeva_label": "Sample Card Reason",
+      "veeva_datatype": "picklist",
+      "veeva_required": null,
+      "classification": {
+        "canonical": "Map",
+        "original": "GAP_CUSTOM_FIELD"
+      },
+      "target": {
+        "api_name": "Sample_Card_Reason_vod__c",
+        "object": "Task",
+        "confidence": "Medium"
+      },
+      "action": "auto_generate",
+      "basis": "From layout mapping file (status: GAP_CUSTOM_FIELD). CREATE custom field Sample_Card_Reason_vod__c on Task, then add to layout"
+    }
+  ]
+}

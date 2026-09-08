@@ -97,13 +97,29 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+# Bumps the size of every st.caption() description throughout the app --
+# targets Streamlit's own documented testid for caption elements.
+# NOTE: verified this selector is what Streamlit's frontend actually uses
+# internally (confirmed via the library's own source, which tags every
+# st.caption() call with element_type=CAPTION) -- but I can't render a real
+# browser from here to visually confirm the CSS applies as expected. Please
+# do a quick visual check after this change. To adjust the size further,
+# just change the single "16px" below -- Streamlit's untouched default is
+# roughly 14px, so this is a modest bump; try 17-18px for more.
+st.markdown("""
+<style>
+[data-testid="stCaptionContainer"] {
+    font-size: 18px !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.title("Veeva \u2192 LSC Page Layout Accelerator")
 st.caption("Extract \u2192 Review & Approve \u2192 Generate \u2192 Validate \u2192 Deploy")
 # Version marker, kept clean and short on purpose (not a debug log) --
 # specifically so you can self-check you're on the right file in one
 # glance. To verify: findstr /C:"2026-09-03-A" scripts\app.py
 # (an empty result means you're on an OLDER file).
-st.caption("Build: 2026-09-03-A")
 
 # User Guide -- a single, consolidated place for anything that's
 # EXPLANATORY (concepts, terminology, how the workflow fits together)
@@ -272,19 +288,26 @@ with st.expander("Upload files & run extraction", expanded=(st.session_state.cla
             from veeva_fetch import list_layout_names_for_object, resolve_sf_executable as _resolve_sf
             sf_exe = _resolve_sf()
             with st.spinner(f"Looking up layouts for '{object_name}'..."):
-                names = list_layout_names_for_object(sf_exe, object_name, veeva_org_alias, AUTO_SFDX_ROOT)
+                names, error_detail = list_layout_names_for_object(sf_exe, object_name, veeva_org_alias, AUTO_SFDX_ROOT)
             st.session_state["available_layouts_for_object"] = names
+            st.session_state["available_layouts_error"] = error_detail
 
         # Layout Name -- ONE single input. When real layouts have been
         # loaded, this field IS a dropdown of them; otherwise it's a plain
         # text box. Same label, same session-state key either way.
         available = st.session_state.get("available_layouts_for_object")
+        available_error = st.session_state.get("available_layouts_error")
         if available:
             current_value = st.session_state.get("layout_name_input", "")
             default_index = available.index(current_value) if current_value in available else 0
             layout_name = st.selectbox("Layout Name", options=available, index=default_index, key="layout_name_input")
         else:
-            if available is not None:
+            if available_error:
+                # A REAL failure, not a genuinely empty result -- show the
+                # actual reason instead of a generic, misleading "not found"
+                # that would hide what's actually wrong.
+                st.error(f"Couldn't load layouts for '{object_name}' \u2014 the lookup itself failed:\n\n{available_error}")
+            elif available is not None:
                 st.warning(f"No layouts found for '{object_name}' \u2014 double-check the object name is correct.")
             layout_name = st.text_input("Layout Name", value="SP_Admin_Layout_HCO", key="layout_name_input")
 
@@ -389,7 +412,8 @@ with st.expander("Upload files & run extraction", expanded=(st.session_state.cla
         else:
             st.error(fr["message"])
 
-st.subheader("Mapping Registry (used for Review & Approve)")
+st.subheader("Veeva \u2192 LSC Field Mapping Registry")
+st.caption("Our mapping accelerator's output, the mapping/equivalents of Veeva org \u2014 LSC org. ")
 registry_file = st.file_uploader("Mapping Registry JSON (existing)", type=["json"])
 
 run_clicked = st.button("Run Extraction + Classification", type="primary")
@@ -540,7 +564,7 @@ if st.session_state.classified:
 #         elif not api_key:
 #             st.caption("Enter an API key above to enable this.")
 
-    st.caption("Edit Action / Target / add a comment for anything that needs a human call. "
+    st.caption("Edit anything you feel is wrongly mapped \u2014 Classification, Target, or Status. "
                "Nothing is built until you click Approve below.")
 
     rows = []
@@ -795,6 +819,18 @@ if st.session_state.classified:
         status_changed = prev_row is not None and row["Status (system)"] != prev_row["Status (system)"]
         confirmed_just_ticked = (prev_row is not None and not prev_row.get("Confirmed", False)
                                   and row.get("Confirmed", False))
+        # The missing symmetric case, confirmed as a real gap: unticking
+        # Confirmed did nothing at all before -- only the tick direction
+        # was ever handled. Scoped carefully: only reverts when
+        # Classification is STILL "Map" (unchanged) and Status is
+        # currently auto_generate, which is specifically the signature of
+        # "this row reached auto_generate via the Confirmed checkbox while
+        # sitting at Map/flag_manual_review" -- NOT a case where the person
+        # deliberately reclassified to Map/Direct through the dropdown
+        # instead (that's a genuine decision, not something an accidental
+        # untick should quietly undo).
+        confirmed_just_unticked = (prev_row is not None and prev_row.get("Confirmed", False)
+                                    and not row.get("Confirmed", False))
 
         if classification_changed:
             new_status = CLASSIFICATION_TO_STATUS.get(row["Classification"])
@@ -803,6 +839,10 @@ if st.session_state.classified:
                 correction_happened = True
         elif confirmed_just_ticked and prev_row["Status (system)"] == "flag_manual_review":
             row["Status (system)"] = "auto_generate"
+            correction_happened = True
+        elif (confirmed_just_unticked and row["Classification"] == "Map"
+                and row["Status (system)"] == "auto_generate"):
+            row["Status (system)"] = "flag_manual_review"
             correction_happened = True
         elif status_changed:
             new_classification = STATUS_TO_CLASSIFICATION.get(row["Status (system)"])
@@ -880,7 +920,7 @@ if st.session_state.classified:
 \U0001F534 <b>{decision_needed_count} genuinely need a decision</b> \u2014 unclear what they should become.
 \U0001F7E0 <b>{retire_count} already decided as Retire</b> \u2014 just needs your sign-off to drop.
 \U0001F7E3 <b>{rebuild_count} already decided as Rebuild</b> \u2014 needs custom development, not a decision.
-<span style="color:#005CD9;">(Updates live as you edit above. See the User Guide for what each term means.)</span>
+<span style="color:#005CD9;">(Updates live as you edit above \u2014 see the \u2139\ufe0f User Guide button near the top of the page for what each term means.)</span>
 </div>
 """, unsafe_allow_html=True)
 
